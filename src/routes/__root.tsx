@@ -3,6 +3,8 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import '../styles.css'
+import Header from '#/components/Header'
+import Footer from '#/components/Footer'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -10,8 +12,12 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <>
-      <Outlet />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
       <TanStackDevtools
         config={{
           position: 'bottom-right',
@@ -23,6 +29,6 @@ function RootComponent() {
           },
         ]}
       />
-    </>
+    </div>
   )
 }
