@@ -7,7 +7,8 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-const config = defineConfig({
+export default defineConfig({
+  base: process.env.BASE_PATH ?? '/',
   plugins: [
     devtools(),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
@@ -16,5 +17,3 @@ const config = defineConfig({
     viteReact(),
   ],
 })
-
-export default config
