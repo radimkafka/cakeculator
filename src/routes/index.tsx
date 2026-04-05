@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { DollarSign } from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: HomePage })
@@ -25,19 +25,21 @@ function HomePage() {
         <h2 className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-4">
           Calculators
         </h2>
-        <article className="bg-card border-2 border-border rounded-md p-6 shadow-[4px_4px_0px_0px_var(--border)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--border)] transition-all">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-secondary/20 rounded-md p-1.5">
-              <DollarSign className="h-5 w-5 text-secondary" />
+        <Link to="/calculators/cake-cost" className="block no-underline">
+          <article className="bg-card border-2 border-border rounded-md p-6 shadow-[4px_4px_0px_0px_var(--border)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--border)] transition-all">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-secondary/20 rounded-md p-1.5">
+                <DollarSign className="h-5 w-5 text-secondary" />
+              </div>
+              <h3 className="font-semibold text-card-foreground text-lg">
+                Cake Cost
+              </h3>
             </div>
-            <h3 className="font-semibold text-card-foreground text-lg">
-              Cake Cost
-            </h3>
-          </div>
-          <p className="text-muted-foreground text-sm">
-            Calculate the total cost of your cake based on ingredients and portions.
-          </p>
-        </article>
+            <p className="text-muted-foreground text-sm">
+              Calculate the total cost of your cake based on ingredients and portions.
+            </p>
+          </article>
+        </Link>
       </section>
     </div>
   )
