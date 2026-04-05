@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalculatorsCakeCostRouteImport } from './routes/calculators/cake-cost'
+import { Route as CalculatorsCakeCostIndexRouteImport } from './routes/calculators/cake-cost/index'
+import { Route as CalculatorsCakeCostRecipeIdRouteImport } from './routes/calculators/cake-cost/$recipeId'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -28,35 +30,67 @@ const CalculatorsCakeCostRoute = CalculatorsCakeCostRouteImport.update({
   path: '/calculators/cake-cost',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalculatorsCakeCostIndexRoute =
+  CalculatorsCakeCostIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => CalculatorsCakeCostRoute,
+  } as any)
+const CalculatorsCakeCostRecipeIdRoute =
+  CalculatorsCakeCostRecipeIdRouteImport.update({
+    id: '/$recipeId',
+    path: '/$recipeId',
+    getParentRoute: () => CalculatorsCakeCostRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/calculators/cake-cost': typeof CalculatorsCakeCostRoute
+  '/calculators/cake-cost': typeof CalculatorsCakeCostRouteWithChildren
+  '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
+  '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/calculators/cake-cost': typeof CalculatorsCakeCostRoute
+  '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
+  '/calculators/cake-cost': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/calculators/cake-cost': typeof CalculatorsCakeCostRoute
+  '/calculators/cake-cost': typeof CalculatorsCakeCostRouteWithChildren
+  '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
+  '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/calculators/cake-cost'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/calculators/cake-cost'
+    | '/calculators/cake-cost/$recipeId'
+    | '/calculators/cake-cost/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/calculators/cake-cost'
-  id: '__root__' | '/' | '/about' | '/calculators/cake-cost'
+  to:
+    | '/'
+    | '/about'
+    | '/calculators/cake-cost/$recipeId'
+    | '/calculators/cake-cost'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/calculators/cake-cost'
+    | '/calculators/cake-cost/$recipeId'
+    | '/calculators/cake-cost/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  CalculatorsCakeCostRoute: typeof CalculatorsCakeCostRoute
+  CalculatorsCakeCostRoute: typeof CalculatorsCakeCostRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -82,13 +116,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorsCakeCostRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calculators/cake-cost/': {
+      id: '/calculators/cake-cost/'
+      path: '/'
+      fullPath: '/calculators/cake-cost/'
+      preLoaderRoute: typeof CalculatorsCakeCostIndexRouteImport
+      parentRoute: typeof CalculatorsCakeCostRoute
+    }
+    '/calculators/cake-cost/$recipeId': {
+      id: '/calculators/cake-cost/$recipeId'
+      path: '/$recipeId'
+      fullPath: '/calculators/cake-cost/$recipeId'
+      preLoaderRoute: typeof CalculatorsCakeCostRecipeIdRouteImport
+      parentRoute: typeof CalculatorsCakeCostRoute
+    }
   }
 }
+
+interface CalculatorsCakeCostRouteChildren {
+  CalculatorsCakeCostRecipeIdRoute: typeof CalculatorsCakeCostRecipeIdRoute
+  CalculatorsCakeCostIndexRoute: typeof CalculatorsCakeCostIndexRoute
+}
+
+const CalculatorsCakeCostRouteChildren: CalculatorsCakeCostRouteChildren = {
+  CalculatorsCakeCostRecipeIdRoute: CalculatorsCakeCostRecipeIdRoute,
+  CalculatorsCakeCostIndexRoute: CalculatorsCakeCostIndexRoute,
+}
+
+const CalculatorsCakeCostRouteWithChildren =
+  CalculatorsCakeCostRoute._addFileChildren(CalculatorsCakeCostRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  CalculatorsCakeCostRoute: CalculatorsCakeCostRoute,
+  CalculatorsCakeCostRoute: CalculatorsCakeCostRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
