@@ -9,6 +9,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: process.env.BASE_PATH ?? '/',
+  server: {
+    port: 3000,
+    strictPort: true,
+  },
   plugins: [
     devtools(),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),

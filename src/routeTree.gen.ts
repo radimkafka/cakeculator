@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CalculatorsPanScalingRouteImport } from './routes/calculators/pan-scaling'
 import { Route as CalculatorsCakeCostRouteImport } from './routes/calculators/cake-cost'
 import { Route as CalculatorsCakeCostIndexRouteImport } from './routes/calculators/cake-cost/index'
 import { Route as CalculatorsCakeCostRecipeIdRouteImport } from './routes/calculators/cake-cost/$recipeId'
@@ -23,6 +24,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorsPanScalingRoute = CalculatorsPanScalingRouteImport.update({
+  id: '/calculators/pan-scaling',
+  path: '/calculators/pan-scaling',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CalculatorsCakeCostRoute = CalculatorsCakeCostRouteImport.update({
@@ -47,12 +53,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/calculators/cake-cost': typeof CalculatorsCakeCostRouteWithChildren
+  '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
   '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
   '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
   '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
   '/calculators/cake-cost': typeof CalculatorsCakeCostIndexRoute
 }
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/calculators/cake-cost': typeof CalculatorsCakeCostRouteWithChildren
+  '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
   '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
   '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
 }
@@ -70,12 +79,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/calculators/cake-cost'
+    | '/calculators/pan-scaling'
     | '/calculators/cake-cost/$recipeId'
     | '/calculators/cake-cost/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/calculators/pan-scaling'
     | '/calculators/cake-cost/$recipeId'
     | '/calculators/cake-cost'
   id:
@@ -83,6 +94,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/calculators/cake-cost'
+    | '/calculators/pan-scaling'
     | '/calculators/cake-cost/$recipeId'
     | '/calculators/cake-cost/'
   fileRoutesById: FileRoutesById
@@ -91,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   CalculatorsCakeCostRoute: typeof CalculatorsCakeCostRouteWithChildren
+  CalculatorsPanScalingRoute: typeof CalculatorsPanScalingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -107,6 +120,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculators/pan-scaling': {
+      id: '/calculators/pan-scaling'
+      path: '/calculators/pan-scaling'
+      fullPath: '/calculators/pan-scaling'
+      preLoaderRoute: typeof CalculatorsPanScalingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/calculators/cake-cost': {
@@ -150,6 +170,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CalculatorsCakeCostRoute: CalculatorsCakeCostRouteWithChildren,
+  CalculatorsPanScalingRoute: CalculatorsPanScalingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

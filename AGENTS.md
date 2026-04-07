@@ -71,6 +71,16 @@ src/
 
 Both resolve to `src/`. Use `#/` for application code. `@/` exists for shadcn/ui compatibility.
 
+## Dev Server
+
+Before starting the dev server, check if port 3000 is already in use:
+
+```powershell
+netstat -ano | findstr ':3000'
+```
+
+If the port is already occupied, **skip starting a new server** and use `http://localhost:3000` directly. Starting a second instance will hang indefinitely because `vite.config.ts` sets `strictPort: true`.
+
 ## Commands
 
 ```bash
