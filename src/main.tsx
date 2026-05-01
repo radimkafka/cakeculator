@@ -2,6 +2,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { AuthProvider } from "#/contexts/AuthContext";
+import { GDriveSyncProvider } from "#/contexts/GDriveSyncContext";
 
 const router = createRouter({
   routeTree,
@@ -22,7 +23,9 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <AuthProvider>
-      <RouterProvider router={router} />
+      <GDriveSyncProvider>
+        <RouterProvider router={router} />
+      </GDriveSyncProvider>
     </AuthProvider>
   );
 }

@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { Plus, ShoppingBasket } from "lucide-react"
+import { Cloud, Loader2, Plus, ShoppingBasket } from "lucide-react"
 import { useEffect } from "react"
 import { Button } from "#/components/ui/button"
 import IngredientRow from "#/components/IngredientRow"
 import RecipeSwitcher from "#/components/RecipeSwitcher"
+import { useAuth } from "#/contexts/AuthContext"
+import { useGDriveSync } from "#/contexts/GDriveSyncContext"
 import useRecipes from "#/hooks/useRecipes"
 import { calculateGrandTotal } from "#/lib/calculator"
 
@@ -14,6 +16,8 @@ export const Route = createFileRoute("/calculators/cake-cost/$recipeId")({
 function RecipePage() {
   const { recipeId } = Route.useParams()
   const navigate = useNavigate()
+  const { state: authState } = useAuth()
+  const { syncStatus, error: syncError, pendingCloudRecipes, saveToDrive, acceptCloudRecipes, dismissCloudRecipes } = useGDriveSync()
   const {
     recipes,
     setActiveRecipe,
@@ -24,6 +28,7 @@ function RecipePage() {
     renameRecipe,
     copyRecipe,
     deleteRecipe,
+    replaceRecipes,
   } = useRecipes()
 
   // URL is the source of truth for which recipe is displayed
@@ -71,8 +76,35 @@ function RecipePage() {
     }
   }
 
+  function handleAcceptCloud() {
+    const cloudRecipes = acceptCloudRecipes()
+    if (cloudRecipes.length > 0) {
+      replaceRecipes(cloudRecipes)
+      navigate({ to: "/calculators/cake-cost/$recipeId", params: { recipeId: cloudRecipes[0].id } })
+    }
+  }
+
   return (
     <div className="max-w-5xl mx-auto w-full px-4 py-8">
+      {pendingCloudRecipes && (
+        <div className="bg-secondary border-2 border-border rounded-md px-4 py-3 shadow-[4px_4px_0px_0px_var(--border)] mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Cloud className="h-5 w-5 text-secondary-foreground shrink-0" />
+            <span className="text-sm font-medium text-secondary-foreground">
+              Newer recipes found in your Google Drive
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="default" size="sm" onClick={handleAcceptCloud}>
+              Use Cloud
+            </Button>
+            <Button variant="outline" size="sm" onClick={dismissCloudRecipes}>
+              Keep Local
+            </Button>
+          </div>
+        </div>
+      )}
+
       <RecipeSwitcher
         recipes={recipes}
         activeRecipe={activeRecipe}
@@ -124,6 +156,30 @@ function RecipePage() {
             <span className="font-bold text-lg tabular-nums text-secondary-foreground">
               {calculateGrandTotal(ingredients).toFixed(2)}
             </span>
+          </div>
+        )}
+
+        {authState.status === "authenticated" && (
+          <div className="flex items-center gap-3 mt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => saveToDrive(recipes)}
+              disabled={syncStatus === "saving" || syncStatus === "fetching"}
+            >
+              {syncStatus === "saving" ? (
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+              ) : (
+                <Cloud className="h-4 w-4 mr-1.5" />
+              )}
+              {syncStatus === "saving" ? "Saving..." : "Save to Drive"}
+            </Button>
+            {syncStatus === "saved" && (
+              <span className="text-xs text-muted-foreground">Saved</span>
+            )}
+            {syncStatus === "error" && syncError && (
+              <span className="text-xs text-destructive">{syncError}</span>
+            )}
           </div>
         )}
       </div>

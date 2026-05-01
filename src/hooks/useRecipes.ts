@@ -120,6 +120,13 @@ export default function useRecipes() {
     )
   }
 
+  function replaceRecipes(newRecipes: Recipe[]) {
+    setRecipes(newRecipes)
+    if (!newRecipes.some((r) => r.id === activeRecipeId)) {
+      setActiveRecipeIdState(newRecipes[0]?.id ?? "")
+    }
+  }
+
   return {
     recipes,
     activeRecipe,
@@ -130,6 +137,7 @@ export default function useRecipes() {
     copyRecipe,
     deleteRecipe,
     setActiveRecipe,
+    replaceRecipes,
     addIngredient,
     updateIngredient,
     removeIngredient,

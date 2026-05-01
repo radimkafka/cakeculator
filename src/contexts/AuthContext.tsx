@@ -75,13 +75,17 @@ function AuthProviderInner({ children }: { children: ReactNode }) {
 
   const requestToken = useGoogleLogin({
     flow: 'implicit',
-    scope: 'openid profile email',
+    scope: 'openid profile email https://www.googleapis.com/auth/drive.appdata',
     onSuccess: (tokenResponse) => {
       handleLoginSuccess(tokenResponse.access_token, tokenResponse.expires_in)
     },
     onError: (error) => {
       console.error('Google login error:', error)
       dispatch({ type: 'TOKEN_EXPIRED' })
+    },
+    onNonOAuthError: () => {
+      // User closed the popup — reset back to idle so they can try again
+      dispatch({ type: 'LOGOUT' })
     },
   })
 
