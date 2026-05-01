@@ -8,8 +8,7 @@ import {
   type ReactNode,
 } from "react"
 import { useAuth } from "#/contexts/AuthContext"
-import { fetchRecipesFromDrive, saveRecipesToDrive } from "#/lib/gdrive-storage"
-import { loadRecipes } from "#/lib/recipe-storage"
+import { fetchRecipesFromDrive, loadLastSyncedAt, saveLastSyncedAt, saveRecipesToDrive } from "#/lib/gdrive-storage"
 import type { Recipe } from "#/types/recipe"
 
 type SyncStatus = "idle" | "fetching" | "saving" | "error" | "saved"
@@ -24,10 +23,6 @@ type GDriveSyncContextValue = {
 }
 
 const GDriveSyncContext = createContext<GDriveSyncContextValue | null>(null)
-
-function getNewestTimestamp(recipes: Recipe[]): number {
-  return Math.max(0, ...recipes.map((r) => r.createdAt))
-}
 
 export function GDriveSyncProvider({ children }: { children: ReactNode }) {
   const { state: authState } = useAuth()
@@ -48,20 +43,18 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
       setError(null)
 
       try {
-        const cloudRecipes = await fetchRecipesFromDrive(authState.accessToken!)
+        const result = await fetchRecipesFromDrive(authState.accessToken!)
         if (cancelled) return
 
-        if (!cloudRecipes) {
+        if (!result) {
           setSyncStatus("idle")
           return
         }
 
-        const localRecipes = loadRecipes()
-        const cloudNewest = getNewestTimestamp(cloudRecipes)
-        const localNewest = getNewestTimestamp(localRecipes)
+        const lastSynced = loadLastSyncedAt()
 
-        if (cloudNewest > localNewest) {
-          setPendingCloudRecipes(cloudRecipes)
+        if (result.modifiedTime > lastSynced) {
+          setPendingCloudRecipes(result.recipes)
         }
 
         setSyncStatus("idle")
@@ -90,6 +83,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
 
       try {
         await saveRecipesToDrive(authState.accessToken, recipes)
+        saveLastSyncedAt(Date.now())
         setSyncStatus("saved")
       } catch (err) {
         const message = err instanceof Error ? err.message : "Save failed"
@@ -107,6 +101,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
   const acceptCloudRecipes = useCallback((): Recipe[] => {
     const recipes = pendingCloudRecipes ?? []
     setPendingCloudRecipes(null)
+    saveLastSyncedAt(Date.now())
     return recipes
   }, [pendingCloudRecipes])
 
