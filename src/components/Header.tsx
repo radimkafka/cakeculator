@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import ThemeToggle from '#/components/ThemeToggle'
+import UserMenu from '#/components/UserMenu'
 
 export default function Header() {
   return (
@@ -11,7 +12,10 @@ export default function Header() {
             <span className="text-accent">culator</span>
           </span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <UserMenu />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )
