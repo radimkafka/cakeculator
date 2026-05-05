@@ -16,7 +16,7 @@ import { Route as RecipesRecipeIdRouteImport } from './routes/recipes/$recipeId'
 import { Route as CalculatorsPanScalingRouteImport } from './routes/calculators/pan-scaling'
 import { Route as CalculatorsCakeCostRouteImport } from './routes/calculators/cake-cost'
 import { Route as CalculatorsCakeCostIndexRouteImport } from './routes/calculators/cake-cost/index'
-import { Route as CalculatorsCakeCostRecipeIdRouteImport } from './routes/calculators/cake-cost/$recipeId'
+import { Route as CalculatorsCakeCostOrderIdRouteImport } from './routes/calculators/cake-cost/$orderId'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -54,10 +54,10 @@ const CalculatorsCakeCostIndexRoute =
     path: '/',
     getParentRoute: () => CalculatorsCakeCostRoute,
   } as any)
-const CalculatorsCakeCostRecipeIdRoute =
-  CalculatorsCakeCostRecipeIdRouteImport.update({
-    id: '/$recipeId',
-    path: '/$recipeId',
+const CalculatorsCakeCostOrderIdRoute =
+  CalculatorsCakeCostOrderIdRouteImport.update({
+    id: '/$orderId',
+    path: '/$orderId',
     getParentRoute: () => CalculatorsCakeCostRoute,
   } as any)
 
@@ -68,7 +68,7 @@ export interface FileRoutesByFullPath {
   '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
   '/recipes/$recipeId': typeof RecipesRecipeIdRoute
   '/recipes/': typeof RecipesIndexRoute
-  '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
+  '/calculators/cake-cost/$orderId': typeof CalculatorsCakeCostOrderIdRoute
   '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRoutesByTo {
@@ -77,7 +77,7 @@ export interface FileRoutesByTo {
   '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
   '/recipes/$recipeId': typeof RecipesRecipeIdRoute
   '/recipes': typeof RecipesIndexRoute
-  '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
+  '/calculators/cake-cost/$orderId': typeof CalculatorsCakeCostOrderIdRoute
   '/calculators/cake-cost': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRoutesById {
@@ -88,7 +88,7 @@ export interface FileRoutesById {
   '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
   '/recipes/$recipeId': typeof RecipesRecipeIdRoute
   '/recipes/': typeof RecipesIndexRoute
-  '/calculators/cake-cost/$recipeId': typeof CalculatorsCakeCostRecipeIdRoute
+  '/calculators/cake-cost/$orderId': typeof CalculatorsCakeCostOrderIdRoute
   '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
 }
 export interface FileRouteTypes {
@@ -100,7 +100,7 @@ export interface FileRouteTypes {
     | '/calculators/pan-scaling'
     | '/recipes/$recipeId'
     | '/recipes/'
-    | '/calculators/cake-cost/$recipeId'
+    | '/calculators/cake-cost/$orderId'
     | '/calculators/cake-cost/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -109,7 +109,7 @@ export interface FileRouteTypes {
     | '/calculators/pan-scaling'
     | '/recipes/$recipeId'
     | '/recipes'
-    | '/calculators/cake-cost/$recipeId'
+    | '/calculators/cake-cost/$orderId'
     | '/calculators/cake-cost'
   id:
     | '__root__'
@@ -119,7 +119,7 @@ export interface FileRouteTypes {
     | '/calculators/pan-scaling'
     | '/recipes/$recipeId'
     | '/recipes/'
-    | '/calculators/cake-cost/$recipeId'
+    | '/calculators/cake-cost/$orderId'
     | '/calculators/cake-cost/'
   fileRoutesById: FileRoutesById
 }
@@ -183,23 +183,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorsCakeCostIndexRouteImport
       parentRoute: typeof CalculatorsCakeCostRoute
     }
-    '/calculators/cake-cost/$recipeId': {
-      id: '/calculators/cake-cost/$recipeId'
-      path: '/$recipeId'
-      fullPath: '/calculators/cake-cost/$recipeId'
-      preLoaderRoute: typeof CalculatorsCakeCostRecipeIdRouteImport
+    '/calculators/cake-cost/$orderId': {
+      id: '/calculators/cake-cost/$orderId'
+      path: '/$orderId'
+      fullPath: '/calculators/cake-cost/$orderId'
+      preLoaderRoute: typeof CalculatorsCakeCostOrderIdRouteImport
       parentRoute: typeof CalculatorsCakeCostRoute
     }
   }
 }
 
 interface CalculatorsCakeCostRouteChildren {
-  CalculatorsCakeCostRecipeIdRoute: typeof CalculatorsCakeCostRecipeIdRoute
+  CalculatorsCakeCostOrderIdRoute: typeof CalculatorsCakeCostOrderIdRoute
   CalculatorsCakeCostIndexRoute: typeof CalculatorsCakeCostIndexRoute
 }
 
 const CalculatorsCakeCostRouteChildren: CalculatorsCakeCostRouteChildren = {
-  CalculatorsCakeCostRecipeIdRoute: CalculatorsCakeCostRecipeIdRoute,
+  CalculatorsCakeCostOrderIdRoute: CalculatorsCakeCostOrderIdRoute,
   CalculatorsCakeCostIndexRoute: CalculatorsCakeCostIndexRoute,
 }
 

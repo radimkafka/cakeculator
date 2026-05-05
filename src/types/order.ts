@@ -1,6 +1,6 @@
 import type { Ingredient } from "#/types/ingredient"
 
-export type Recipe = {
+export type Order = {
   id: string
   name: string
   createdAt: number

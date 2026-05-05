@@ -16,9 +16,9 @@ import {
   type CloudData,
 } from "#/lib/gdrive-storage"
 import {
-  loadRecipes as loadCakeCostRecipes,
-  saveRecipes as saveCakeCostRecipes,
-} from "#/lib/recipe-storage"
+  loadOrders as loadCakeCostOrders,
+  saveOrders as saveCakeCostOrders,
+} from "#/lib/order-storage"
 import {
   loadRecipes as loadRecipeBookRecipes,
   saveRecipes as saveRecipeBookRecipes,
@@ -95,8 +95,8 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
 
       try {
         const data: CloudData = {
-          schemaVersion: 2,
-          cakeCost: { recipes: loadCakeCostRecipes() },
+          schemaVersion: 3,
+          cakeCost: { orders: loadCakeCostOrders() },
           recipeBook: { recipes: loadRecipeBookRecipes() },
         }
         await saveCloudDataToDrive(authState.accessToken, data)
@@ -116,12 +116,12 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
   )
 
   const acceptCloudData = useCallback((): CloudData => {
-    const data = pendingCloudData ?? {
-      schemaVersion: 2 as const,
-      cakeCost: { recipes: [] },
+    const data: CloudData = pendingCloudData ?? {
+      schemaVersion: 3,
+      cakeCost: { orders: [] },
       recipeBook: { recipes: [] },
     }
-    saveCakeCostRecipes(data.cakeCost.recipes)
+    saveCakeCostOrders(data.cakeCost.orders)
     saveRecipeBookRecipes(data.recipeBook.recipes)
     setPendingCloudData(null)
     saveLastSyncedAt(Date.now())

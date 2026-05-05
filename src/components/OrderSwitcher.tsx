@@ -18,45 +18,44 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "#/components/ui/alert-dialog"
-import type { Recipe } from "#/types/recipe"
+import type { Order } from "#/types/order"
 
-type RecipeSwitcherProps = {
-  recipes: Recipe[]
-  activeRecipe: Recipe
-  onSelectRecipe: (id: string) => void
-  onCreateRecipe: () => void
-  onRenameRecipe: (id: string, name: string) => void
-  onCopyRecipe: (id: string) => void
-  onDeleteRecipe: (id: string) => void
+type OrderSwitcherProps = {
+  orders: Order[]
+  activeOrder: Order
+  onSelectOrder: (id: string) => void
+  onCreateOrder: () => void
+  onRenameOrder: (id: string, name: string) => void
+  onCopyOrder: (id: string) => void
+  onDeleteOrder: (id: string) => void
 }
 
-export default function RecipeSwitcher({
-  recipes,
-  activeRecipe,
-  onSelectRecipe,
-  onCreateRecipe,
-  onRenameRecipe,
-  onCopyRecipe,
-  onDeleteRecipe,
-}: RecipeSwitcherProps) {
+export default function OrderSwitcher({
+  orders,
+  activeOrder,
+  onSelectOrder,
+  onCreateOrder,
+  onRenameOrder,
+  onCopyOrder,
+  onDeleteOrder,
+}: OrderSwitcherProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState("")
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   function startEditing() {
-    setEditValue(activeRecipe.name)
+    setEditValue(activeOrder.name)
     setIsEditing(true)
   }
 
   function saveEdit() {
     const trimmed = editValue.trim()
-    onRenameRecipe(activeRecipe.id, trimmed || "Untitled Recipe")
+    onRenameOrder(activeOrder.id, trimmed || "Untitled Order")
     setIsEditing(false)
   }
 
   return (
     <div className="mb-6">
-      {/* Recipe name — click to edit */}
       {isEditing ? (
         <input
           type="text"
@@ -82,20 +81,19 @@ export default function RecipeSwitcher({
             role="button"
             className="font-serif font-bold text-2xl sm:text-3xl cursor-pointer hover:opacity-70 transition-opacity text-foreground"
           >
-            {activeRecipe.name}
+            {activeOrder.name}
           </h1>
           <button
             type="button"
             onClick={startEditing}
             className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
-            aria-label="Rename recipe"
+            aria-label="Rename order"
           >
             <Pencil className="h-5 w-5" />
           </button>
         </div>
       )}
 
-      {/* Dropdown switcher + New Recipe */}
       <div className="flex items-center gap-2 mt-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -104,7 +102,7 @@ export default function RecipeSwitcher({
               size="sm"
               className="border-2 border-border font-bold max-w-[200px]"
             >
-              <span className="truncate">{activeRecipe.name}</span>
+              <span className="truncate">{activeOrder.name}</span>
               <ChevronDown className="h-4 w-4 shrink-0" />
             </Button>
           </DropdownMenuTrigger>
@@ -112,35 +110,35 @@ export default function RecipeSwitcher({
             align="start"
             className="border-2 border-border shadow-[4px_4px_0px_0px_var(--border)] min-w-[200px]"
           >
-            {recipes.map((recipe) => (
+            {orders.map((order) => (
               <DropdownMenuItem
-                key={recipe.id}
-                onSelect={() => onSelectRecipe(recipe.id)}
+                key={order.id}
+                onSelect={() => onSelectOrder(order.id)}
               >
-                {recipe.id === activeRecipe.id ? (
+                {order.id === activeOrder.id ? (
                   <Check className="h-4 w-4 text-foreground" />
                 ) : (
                   <span className="w-4" />
                 )}
                 <span
                   className={
-                    recipe.id === activeRecipe.id ? "font-bold" : ""
+                    order.id === activeOrder.id ? "font-bold" : ""
                   }
                 >
-                  {recipe.name}
+                  {order.name}
                 </span>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onSelect={() => onCopyRecipe(activeRecipe.id)}
+              onSelect={() => onCopyOrder(activeOrder.id)}
             >
               <Copy className="h-4 w-4" />
               Duplicate
             </DropdownMenuItem>
             <DropdownMenuItem
               variant="destructive"
-              disabled={recipes.length <= 1}
+              disabled={orders.length <= 1}
               onSelect={() => setShowDeleteDialog(true)}
             >
               <Trash2 className="h-4 w-4" />
@@ -149,26 +147,25 @@ export default function RecipeSwitcher({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button size="sm" onClick={onCreateRecipe}>
+        <Button size="sm" onClick={onCreateOrder}>
           <Plus className="h-4 w-4 mr-1.5" />
-          New Recipe
+          New Order
         </Button>
       </div>
 
-      {/* Delete confirmation */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent className="border-2 border-border shadow-[8px_8px_0px_0px_var(--border)] rounded-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Recipe?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Order?</AlertDialogTitle>
             <AlertDialogDescription>
-              {`This will permanently delete '${activeRecipe.name}' and all its ingredients. This action cannot be undone.`}
+              {`This will permanently delete '${activeOrder.name}' and all its ingredients. This action cannot be undone.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
-              onClick={() => onDeleteRecipe(activeRecipe.id)}
+              onClick={() => onDeleteOrder(activeOrder.id)}
             >
               Delete
             </AlertDialogAction>

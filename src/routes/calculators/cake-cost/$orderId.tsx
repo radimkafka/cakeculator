@@ -3,85 +3,84 @@ import { Cloud, Loader2, Plus, ShoppingBasket } from "lucide-react"
 import { useEffect } from "react"
 import { Button } from "#/components/ui/button"
 import IngredientRow from "#/components/IngredientRow"
-import RecipeSwitcher from "#/components/RecipeSwitcher"
+import OrderSwitcher from "#/components/OrderSwitcher"
 import { useAuth } from "#/contexts/AuthContext"
 import { useGDriveSync } from "#/contexts/GDriveSyncContext"
-import useRecipes from "#/hooks/useRecipes"
+import useOrders from "#/hooks/useOrders"
 import { calculateGrandTotal } from "#/lib/calculator"
 
-export const Route = createFileRoute("/calculators/cake-cost/$recipeId")({
-  component: RecipePage,
+export const Route = createFileRoute("/calculators/cake-cost/$orderId")({
+  component: OrderPage,
 })
 
-function RecipePage() {
-  const { recipeId } = Route.useParams()
+function OrderPage() {
+  const { orderId } = Route.useParams()
   const navigate = useNavigate()
   const { state: authState } = useAuth()
   const { syncStatus, error: syncError, pendingCloudData, saveAllToDrive, acceptCloudData, dismissCloudData } = useGDriveSync()
   const {
-    recipes,
-    setActiveRecipe,
+    orders,
+    setActiveOrder,
     addIngredient,
     updateIngredient,
     removeIngredient,
-    createRecipe,
-    renameRecipe,
-    copyRecipe,
-    deleteRecipe,
-    replaceRecipes,
-  } = useRecipes()
+    createOrder,
+    renameOrder,
+    copyOrder,
+    deleteOrder,
+    replaceOrders,
+  } = useOrders()
 
-  // URL is the source of truth for which recipe is displayed
-  const activeRecipe = recipes.find((r) => r.id === recipeId) ?? recipes[0]
-  const ingredients = activeRecipe?.ingredients ?? []
+  // URL is the source of truth for which order is displayed
+  const activeOrder = orders.find((o) => o.id === orderId) ?? orders[0]
+  const ingredients = activeOrder?.ingredients ?? []
 
-  // Sync hook's activeRecipeId so ingredient ops target the right recipe
-  // Also handle invalid recipe IDs in the URL
+  // Sync hook's activeOrderId so ingredient ops target the right order
+  // Also handle invalid order IDs in the URL
   useEffect(() => {
-    if (!recipes.length) return
-    const exists = recipes.some((r) => r.id === recipeId)
+    if (!orders.length) return
+    const exists = orders.some((o) => o.id === orderId)
     if (!exists) {
       navigate({
-        to: "/calculators/cake-cost/$recipeId",
-        params: { recipeId: recipes[0].id },
+        to: "/calculators/cake-cost/$orderId",
+        params: { orderId: orders[0].id },
         replace: true,
       })
       return
     }
-    setActiveRecipe(recipeId)
+    setActiveOrder(orderId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipeId]) // intentionally only recipeId — avoids feedback loop
+  }, [orderId]) // intentionally only orderId — avoids feedback loop
 
-  // Navigation handlers — all navigation lives here, not in the hook
-  function handleSelectRecipe(id: string) {
-    navigate({ to: "/calculators/cake-cost/$recipeId", params: { recipeId: id } })
+  function handleSelectOrder(id: string) {
+    navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: id } })
   }
 
-  function handleCreateRecipe() {
-    const newId = createRecipe()
-    navigate({ to: "/calculators/cake-cost/$recipeId", params: { recipeId: newId } })
+  function handleCreateOrder() {
+    const newId = createOrder()
+    navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: newId } })
   }
 
-  function handleCopyRecipe(id: string) {
-    const newId = copyRecipe(id)
+  function handleCopyOrder(id: string) {
+    const newId = copyOrder(id)
     if (newId) {
-      navigate({ to: "/calculators/cake-cost/$recipeId", params: { recipeId: newId } })
+      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: newId } })
     }
   }
 
-  function handleDeleteRecipe(id: string) {
-    const nextId = deleteRecipe(id)
+  function handleDeleteOrder(id: string) {
+    const nextId = deleteOrder(id)
     if (nextId) {
-      navigate({ to: "/calculators/cake-cost/$recipeId", params: { recipeId: nextId } })
+      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: nextId } })
     }
   }
 
   function handleAcceptCloud() {
     const data = acceptCloudData()
-    const cloudRecipes = data.cakeCost.recipes
-    if (cloudRecipes.length > 0) {
-      replaceRecipes(cloudRecipes)
-      navigate({ to: "/calculators/cake-cost/$recipeId", params: { recipeId: cloudRecipes[0].id } })
+    const cloudOrders = data.cakeCost.orders
+    if (cloudOrders.length > 0) {
+      replaceOrders(cloudOrders)
+      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: cloudOrders[0].id } })
     }
   }
 
@@ -106,14 +105,14 @@ function RecipePage() {
         </div>
       )}
 
-      <RecipeSwitcher
-        recipes={recipes}
-        activeRecipe={activeRecipe}
-        onSelectRecipe={handleSelectRecipe}
-        onCreateRecipe={handleCreateRecipe}
-        onRenameRecipe={renameRecipe}
-        onCopyRecipe={handleCopyRecipe}
-        onDeleteRecipe={handleDeleteRecipe}
+      <OrderSwitcher
+        orders={orders}
+        activeOrder={activeOrder}
+        onSelectOrder={handleSelectOrder}
+        onCreateOrder={handleCreateOrder}
+        onRenameOrder={renameOrder}
+        onCopyOrder={handleCopyOrder}
+        onDeleteOrder={handleDeleteOrder}
       />
 
       <div className="flex flex-col gap-3">
