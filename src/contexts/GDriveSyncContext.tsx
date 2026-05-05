@@ -8,18 +8,31 @@ import {
   type ReactNode,
 } from "react"
 import { useAuth } from "#/contexts/AuthContext"
-import { fetchRecipesFromDrive, loadLastSyncedAt, saveLastSyncedAt, saveRecipesToDrive } from "#/lib/gdrive-storage"
-import type { Recipe } from "#/types/recipe"
+import {
+  fetchCloudDataFromDrive,
+  loadLastSyncedAt,
+  saveLastSyncedAt,
+  saveCloudDataToDrive,
+  type CloudData,
+} from "#/lib/gdrive-storage"
+import {
+  loadRecipes as loadCakeCostRecipes,
+  saveRecipes as saveCakeCostRecipes,
+} from "#/lib/recipe-storage"
+import {
+  loadRecipes as loadRecipeBookRecipes,
+  saveRecipes as saveRecipeBookRecipes,
+} from "#/lib/recipe-book-storage"
 
 type SyncStatus = "idle" | "fetching" | "saving" | "error" | "saved"
 
 type GDriveSyncContextValue = {
   syncStatus: SyncStatus
   error: string | null
-  pendingCloudRecipes: Recipe[] | null
-  saveToDrive: (recipes: Recipe[]) => Promise<void>
-  acceptCloudRecipes: () => Recipe[]
-  dismissCloudRecipes: () => void
+  pendingCloudData: CloudData | null
+  saveAllToDrive: () => Promise<void>
+  acceptCloudData: () => CloudData
+  dismissCloudData: () => void
 }
 
 const GDriveSyncContext = createContext<GDriveSyncContextValue | null>(null)
@@ -28,10 +41,9 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
   const { state: authState } = useAuth()
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle")
   const [error, setError] = useState<string | null>(null)
-  const [pendingCloudRecipes, setPendingCloudRecipes] = useState<Recipe[] | null>(null)
+  const [pendingCloudData, setPendingCloudData] = useState<CloudData | null>(null)
   const fetchedRef = useRef(false)
 
-  // Fetch from GDrive once when authenticated
   useEffect(() => {
     if (authState.status !== "authenticated" || !authState.accessToken || fetchedRef.current) return
     fetchedRef.current = true
@@ -43,7 +55,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
       setError(null)
 
       try {
-        const result = await fetchRecipesFromDrive(authState.accessToken!)
+        const result = await fetchCloudDataFromDrive(authState.accessToken!)
         if (cancelled) return
 
         if (!result) {
@@ -54,7 +66,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
         const lastSynced = loadLastSyncedAt()
 
         if (result.modifiedTime > lastSynced) {
-          setPendingCloudRecipes(result.recipes)
+          setPendingCloudData(result.data)
         }
 
         setSyncStatus("idle")
@@ -74,15 +86,20 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true }
   }, [authState.status, authState.accessToken])
 
-  const saveToDrive = useCallback(
-    async (recipes: Recipe[]) => {
+  const saveAllToDrive = useCallback(
+    async () => {
       if (!authState.accessToken) return
 
       setSyncStatus("saving")
       setError(null)
 
       try {
-        await saveRecipesToDrive(authState.accessToken, recipes)
+        const data: CloudData = {
+          schemaVersion: 2,
+          cakeCost: { recipes: loadCakeCostRecipes() },
+          recipeBook: { recipes: loadRecipeBookRecipes() },
+        }
+        await saveCloudDataToDrive(authState.accessToken, data)
         saveLastSyncedAt(Date.now())
         setSyncStatus("saved")
       } catch (err) {
@@ -98,24 +115,30 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
     [authState.accessToken],
   )
 
-  const acceptCloudRecipes = useCallback((): Recipe[] => {
-    const recipes = pendingCloudRecipes ?? []
-    setPendingCloudRecipes(null)
+  const acceptCloudData = useCallback((): CloudData => {
+    const data = pendingCloudData ?? {
+      schemaVersion: 2 as const,
+      cakeCost: { recipes: [] },
+      recipeBook: { recipes: [] },
+    }
+    saveCakeCostRecipes(data.cakeCost.recipes)
+    saveRecipeBookRecipes(data.recipeBook.recipes)
+    setPendingCloudData(null)
     saveLastSyncedAt(Date.now())
-    return recipes
-  }, [pendingCloudRecipes])
+    return data
+  }, [pendingCloudData])
 
-  const dismissCloudRecipes = useCallback(() => {
-    setPendingCloudRecipes(null)
+  const dismissCloudData = useCallback(() => {
+    setPendingCloudData(null)
   }, [])
 
   const value: GDriveSyncContextValue = {
     syncStatus,
     error,
-    pendingCloudRecipes,
-    saveToDrive,
-    acceptCloudRecipes,
-    dismissCloudRecipes,
+    pendingCloudData,
+    saveAllToDrive,
+    acceptCloudData,
+    dismissCloudData,
   }
 
   return (

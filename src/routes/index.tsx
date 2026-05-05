@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { DollarSign, Scaling } from 'lucide-react'
+import { BookOpen, DollarSign, Scaling } from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: HomePage })
 
@@ -53,6 +53,29 @@ function HomePage() {
               </div>
               <p className="text-muted-foreground text-sm">
                 Calculate the ingredient multiplier when switching between round pan sizes.
+              </p>
+            </article>
+          </Link>
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-4">
+          Recipes
+        </h2>
+        <div className="flex flex-col gap-4">
+          <Link to="/recipes" className="block no-underline">
+            <article className="bg-card border-2 border-border rounded-md p-6 shadow-[4px_4px_0px_0px_var(--border)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-secondary/20 rounded-md p-1.5">
+                  <BookOpen className="h-5 w-5 text-secondary" />
+                </div>
+                <h3 className="font-semibold text-card-foreground text-lg">
+                  Recipes
+                </h3>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Save and organize your baking recipes.
               </p>
             </article>
           </Link>
