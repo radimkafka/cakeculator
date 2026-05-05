@@ -29,12 +29,12 @@ export default function useOrders() {
   const activeOrder = orders.find((o) => o.id === activeOrderId) ?? orders[0]
   const ingredients = activeOrder?.ingredients ?? []
 
-  function createOrder(): string {
+  function createOrder(name?: string, ingredients?: Ingredient[]): string {
     const newOrder: Order = {
       id: generateId(),
-      name: `Order ${orders.length + 1}`,
+      name: name?.trim() || `Order ${orders.length + 1}`,
       createdAt: Date.now(),
-      ingredients: [],
+      ingredients: ingredients ?? [],
     }
     setOrders((prev) => [...prev, newOrder])
     setActiveOrderIdState(newOrder.id)

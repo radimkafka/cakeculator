@@ -1,12 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { BookOpen, Cloud, Loader2, Plus } from "lucide-react"
-import { useEffect } from "react"
+import { BookOpen, Cloud, Loader2, Plus, ShoppingBasket } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Button } from "#/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "#/components/ui/dialog"
 import RecipeBookIngredientRow from "#/components/RecipeBookIngredientRow"
 import RecipeBookSwitcher from "#/components/RecipeBookSwitcher"
 import { useAuth } from "#/contexts/AuthContext"
 import { useGDriveSync } from "#/contexts/GDriveSyncContext"
+import useOrders from "#/hooks/useOrders"
 import useRecipeBook from "#/hooks/useRecipeBook"
+import { panScalingCoefficient } from "#/lib/pan-scaling"
+import type { Ingredient } from "#/types/ingredient"
 
 export const Route = createFileRoute("/recipes/$recipeId")({
   component: RecipePage,
@@ -36,9 +46,37 @@ function RecipePage() {
     deleteRecipe,
     replaceRecipes,
   } = useRecipeBook()
+  const { createOrder } = useOrders()
 
   const activeRecipe = recipes.find((r) => r.id === recipeId) ?? recipes[0]
   const ingredients = activeRecipe?.ingredients ?? []
+
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false)
+  const [targetDiameter, setTargetDiameter] = useState(0)
+
+  function openCreateOrderDialog() {
+    if (!activeRecipe) return
+    setTargetDiameter(activeRecipe.diameter)
+    setOrderDialogOpen(true)
+  }
+
+  function handleCreateOrderFromRecipe() {
+    if (!activeRecipe) return
+    const coef = panScalingCoefficient(targetDiameter, activeRecipe.diameter)
+    if (coef === 0) return
+    const orderIngredients: Ingredient[] = activeRecipe.ingredients.map((ing) => ({
+      id: crypto.randomUUID(),
+      name: ing.name,
+      unitPrice: 0,
+      amount: Math.round(ing.amount * coef * 100) / 100,
+    }))
+    const newOrderId = createOrder(activeRecipe.name, orderIngredients)
+    setOrderDialogOpen(false)
+    navigate({
+      to: "/calculators/cake-cost/$orderId",
+      params: { orderId: newOrderId },
+    })
+  }
 
   useEffect(() => {
     if (!recipes.length) return
@@ -119,7 +157,7 @@ function RecipePage() {
       />
 
       {activeRecipe && (
-        <div className="bg-card border-2 border-border rounded-md p-4 shadow-[4px_4px_0px_0px_var(--border)] mb-4 flex items-end gap-3">
+        <div className="bg-card border-2 border-border rounded-md p-4 shadow-[4px_4px_0px_0px_var(--border)] mb-4 flex flex-wrap items-end gap-3">
           <div>
             <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1 block">
               Diameter
@@ -141,6 +179,19 @@ function RecipePage() {
               <span className={badgeClasses}>CM</span>
             </div>
           </div>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={openCreateOrderDialog}
+            disabled={
+              activeRecipe.ingredients.length === 0 ||
+              activeRecipe.diameter <= 0
+            }
+            className="ml-auto"
+          >
+            <ShoppingBasket className="h-4 w-4 mr-1.5" />
+            Create order from recipe
+          </Button>
         </div>
       )}
 
@@ -201,6 +252,46 @@ function RecipePage() {
           </div>
         )}
       </div>
+
+      <Dialog open={orderDialogOpen} onOpenChange={setOrderDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create order from recipe</DialogTitle>
+          </DialogHeader>
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1 block">
+              Target diameter
+            </label>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                value={targetDiameter || ""}
+                onChange={(e) =>
+                  setTargetDiameter(Number.parseFloat(e.target.value) || 0)
+                }
+                placeholder="0"
+                min="0"
+                step="1"
+                autoFocus
+                className={`${inputClasses} w-24`}
+              />
+              <span className={badgeClasses}>CM</span>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOrderDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleCreateOrderFromRecipe}
+              disabled={targetDiameter <= 0}
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
