@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import ThemeToggle from '#/components/ThemeToggle'
 import UserMenu from '#/components/UserMenu'
+import WakeLockToggle from '#/components/WakeLockToggle'
 
 export default function Header() {
   return (
@@ -14,6 +15,7 @@ export default function Header() {
         </Link>
         <div className="flex items-center gap-2">
           <UserMenu />
+          <WakeLockToggle />
           <ThemeToggle />
         </div>
       </div>

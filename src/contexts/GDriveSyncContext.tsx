@@ -95,7 +95,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
 
       try {
         const data: CloudData = {
-          schemaVersion: 3,
+          schemaVersion: 1,
           cakeCost: { orders: loadCakeCostOrders() },
           recipeBook: { recipes: loadRecipeBookRecipes() },
         }
@@ -117,7 +117,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
 
   const acceptCloudData = useCallback((): CloudData => {
     const data: CloudData = pendingCloudData ?? {
-      schemaVersion: 3,
+      schemaVersion: 1,
       cakeCost: { orders: [] },
       recipeBook: { recipes: [] },
     }
