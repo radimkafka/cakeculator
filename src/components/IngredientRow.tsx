@@ -1,6 +1,8 @@
 import { X } from "lucide-react"
 import type { Ingredient } from "#/types/ingredient"
 import { calculateCost } from "#/lib/calculator"
+import { UNITS } from "#/lib/units"
+import UnitSelector from "#/components/UnitSelector"
 
 type IngredientRowProps = {
   ingredient: Ingredient
@@ -19,7 +21,8 @@ export default function IngredientRow({
   onChange,
   onRemove,
 }: IngredientRowProps) {
-  const cost = calculateCost(ingredient.unitPrice, ingredient.amount)
+  const cost = calculateCost(ingredient.unitPrice, ingredient.amount, ingredient.unit)
+  const priceUnitLabel = UNITS[ingredient.unit].priceUnitLabel
 
   return (
     <div className="bg-card border-2 border-border rounded-md p-4 shadow-[4px_4px_0px_0px_var(--border)] flex flex-col gap-3 md:grid md:grid-cols-[1fr_auto_auto_auto_auto] md:items-end md:gap-3">
@@ -70,7 +73,7 @@ export default function IngredientRow({
               step="0.01"
               className={`${inputClasses} w-24`}
             />
-            <span className={badgeClasses}>KG</span>
+            <span className={badgeClasses}>{priceUnitLabel}</span>
           </div>
         </div>
 
@@ -92,7 +95,11 @@ export default function IngredientRow({
               step="1"
               className={`${inputClasses} w-20`}
             />
-            <span className={badgeClasses}>G</span>
+            <UnitSelector
+              value={ingredient.unit}
+              onChange={(unit) => onChange(ingredient.id, { unit })}
+              ariaLabel="Select amount unit"
+            />
           </div>
         </div>
       </div>

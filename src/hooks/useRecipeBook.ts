@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import type { Recipe, Ingredient } from "#/types/recipe-book"
+import { DEFAULT_UNIT } from "#/lib/units"
 import { generateId } from "#/lib/id"
 import {
   loadRecipes,
@@ -95,7 +96,7 @@ export default function useRecipeBook() {
               ...r,
               ingredients: [
                 ...r.ingredients,
-                { id: crypto.randomUUID(), name: "", amount: 0 },
+                { id: crypto.randomUUID(), name: "", amount: 0, unit: DEFAULT_UNIT },
               ],
             }
           : r,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import type { Order } from "#/types/order"
 import type { Ingredient } from "#/types/ingredient"
+import { DEFAULT_UNIT } from "#/lib/units"
 import { generateId } from "#/lib/id"
 import {
   loadOrders,
@@ -87,7 +88,7 @@ export default function useOrders() {
               ...o,
               ingredients: [
                 ...o.ingredients,
-                { id: crypto.randomUUID(), name: "", unitPrice: 0, amount: 0 },
+                { id: crypto.randomUUID(), name: "", unitPrice: 0, amount: 0, unit: DEFAULT_UNIT },
               ],
             }
           : o,

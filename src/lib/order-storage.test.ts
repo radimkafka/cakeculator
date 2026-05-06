@@ -17,10 +17,27 @@ describe("loadOrders", () => {
       id: "o1",
       name: "Birthday cake",
       createdAt: 456,
-      ingredients: [{ id: "i1", name: "Sugar", unitPrice: 0.5, amount: 200 }],
+      ingredients: [{ id: "i1", name: "Sugar", unitPrice: 0.5, amount: 200, unit: "g" as const }],
     }
     saveOrders([order])
     expect(loadOrders()).toEqual([order])
+    expect(warn).not.toHaveBeenCalled()
+  })
+
+  it("defaults legacy ingredients without a unit to grams", () => {
+    window.localStorage.setItem(
+      "cakeculator-orders",
+      JSON.stringify([
+        {
+          id: "o1",
+          name: "Legacy",
+          createdAt: 1,
+          ingredients: [{ id: "i1", name: "Flour", unitPrice: 20, amount: 100 }],
+        },
+      ]),
+    )
+    const result = loadOrders()
+    expect(result[0]?.ingredients[0]?.unit).toBe("g")
     expect(warn).not.toHaveBeenCalled()
   })
 

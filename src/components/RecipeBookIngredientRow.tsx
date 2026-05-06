@@ -1,5 +1,6 @@
 import { X } from "lucide-react"
 import type { Ingredient } from "#/types/recipe-book"
+import UnitSelector from "#/components/UnitSelector"
 
 type RecipeBookIngredientRowProps = {
   ingredient: Ingredient
@@ -9,9 +10,6 @@ type RecipeBookIngredientRowProps = {
 
 const inputClasses =
   "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow"
-
-const badgeClasses =
-  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0"
 
 export default function RecipeBookIngredientRow({
   ingredient,
@@ -66,7 +64,11 @@ export default function RecipeBookIngredientRow({
             step="1"
             className={`${inputClasses} w-24`}
           />
-          <span className={badgeClasses}>G</span>
+          <UnitSelector
+            value={ingredient.unit}
+            onChange={(unit) => onChange(ingredient.id, { unit })}
+            ariaLabel="Select amount unit"
+          />
         </div>
       </div>
     </div>

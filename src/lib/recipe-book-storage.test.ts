@@ -18,10 +18,28 @@ describe("loadRecipes", () => {
       name: "Cake",
       createdAt: 123,
       diameter: 20,
-      ingredients: [{ id: "i1", name: "Flour", amount: 100 }],
+      ingredients: [{ id: "i1", name: "Flour", amount: 100, unit: "g" as const }],
     }
     saveRecipes([recipe])
     expect(loadRecipes()).toEqual([recipe])
+    expect(warn).not.toHaveBeenCalled()
+  })
+
+  it("defaults legacy ingredients without a unit to grams", () => {
+    window.localStorage.setItem(
+      "cakeculator-recipe-book",
+      JSON.stringify([
+        {
+          id: "r1",
+          name: "Legacy",
+          createdAt: 1,
+          diameter: 20,
+          ingredients: [{ id: "i1", name: "Flour", amount: 100 }],
+        },
+      ]),
+    )
+    const result = loadRecipes()
+    expect(result[0]?.ingredients[0]?.unit).toBe("g")
     expect(warn).not.toHaveBeenCalled()
   })
 

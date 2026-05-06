@@ -69,6 +69,7 @@ function RecipePage() {
       name: ing.name,
       unitPrice: 0,
       amount: Math.round(ing.amount * coef * 100) / 100,
+      unit: ing.unit,
     }))
     const newOrderId = createOrder(activeRecipe.name, orderIngredients)
     setOrderDialogOpen(false)
