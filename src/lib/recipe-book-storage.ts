@@ -1,5 +1,7 @@
-import type { Recipe } from "#/types/recipe-book"
+import * as z from "zod/mini"
+import { type Recipe, RecipeSchema } from "#/types/recipe-book"
 import { generateId } from "#/lib/id"
+import { parseOrFallback } from "#/lib/safe-parse"
 
 const RECIPES_KEY = "cakeculator-recipe-book"
 const ACTIVE_RECIPE_KEY = "cakeculator-active-recipe-book"
@@ -21,10 +23,8 @@ export function loadRecipes(): Recipe[] {
     const raw = window.localStorage.getItem(RECIPES_KEY)
     if (raw) {
       const parsed: unknown = JSON.parse(raw)
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed as Recipe[]
-      }
-      return [createDefaultRecipe()]
+      const recipes = parseOrFallback(z.array(RecipeSchema), parsed, [], "recipes")
+      return recipes.length > 0 ? recipes : [createDefaultRecipe()]
     }
 
     const defaultRecipes = [createDefaultRecipe()]

@@ -1,8 +1,11 @@
-import type { Ingredient } from "#/types/ingredient"
+import * as z from "zod/mini"
+import { IngredientSchema } from "#/types/ingredient"
 
-export type Order = {
-  id: string
-  name: string
-  createdAt: number
-  ingredients: Ingredient[]
-}
+export const OrderSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.number(),
+  ingredients: z.array(IngredientSchema),
+})
+
+export type Order = z.infer<typeof OrderSchema>

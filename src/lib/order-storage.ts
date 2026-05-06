@@ -1,5 +1,7 @@
-import type { Order } from "#/types/order"
+import * as z from "zod/mini"
+import { type Order, OrderSchema } from "#/types/order"
 import { generateId } from "#/lib/id"
+import { parseOrFallback } from "#/lib/safe-parse"
 
 const ORDERS_KEY = "cakeculator-orders"
 const ACTIVE_ORDER_KEY = "cakeculator-active-order"
@@ -20,10 +22,8 @@ export function loadOrders(): Order[] {
     const raw = window.localStorage.getItem(ORDERS_KEY)
     if (raw) {
       const parsed: unknown = JSON.parse(raw)
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed as Order[]
-      }
-      return [createDefaultOrder()]
+      const orders = parseOrFallback(z.array(OrderSchema), parsed, [], "orders")
+      return orders.length > 0 ? orders : [createDefaultOrder()]
     }
 
     const defaultOrders = [createDefaultOrder()]

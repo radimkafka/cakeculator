@@ -1,10 +1,17 @@
-import type { AuthState, GoogleUserProfile } from '#/types/auth'
+import { type AuthState, type GoogleUserProfile, GoogleUserProfileSchema } from '#/types/auth'
 
 const KEYS = {
   user: 'cakeculator-auth-user',
   token: 'cakeculator-auth-token',
   tokenExpiry: 'cakeculator-auth-token-expiry',
 } as const
+
+const LOGGED_OUT: AuthState = {
+  status: 'idle',
+  user: null,
+  accessToken: null,
+  tokenExpiry: null,
+}
 
 export function saveAuthState(
   user: GoogleUserProfile,
@@ -21,11 +28,26 @@ export function loadAuthState(): AuthState {
   const token = localStorage.getItem(KEYS.token)
   const expiryStr = localStorage.getItem(KEYS.tokenExpiry)
 
-  if (!userJson) {
-    return { status: 'idle', user: null, accessToken: null, tokenExpiry: null }
+  if (!userJson) return LOGGED_OUT
+
+  let userRaw: unknown
+  try {
+    userRaw = JSON.parse(userJson)
+  } catch {
+    console.warn('[cakeculator] invalid auth user JSON in storage; using defaults')
+    return LOGGED_OUT
   }
 
-  const user = JSON.parse(userJson) as GoogleUserProfile
+  const userResult = GoogleUserProfileSchema.safeParse(userRaw)
+  if (!userResult.success) {
+    console.warn(
+      '[cakeculator] invalid auth user shape in storage; using defaults',
+      userResult.error.issues,
+    )
+    return LOGGED_OUT
+  }
+  const user = userResult.data
+
   const tokenExpiry = expiryStr ? Number(expiryStr) : null
 
   if (!token || !tokenExpiry || Date.now() >= tokenExpiry) {

@@ -1,34 +1,19 @@
-import type { Order } from "#/types/order"
-import type { Recipe } from "#/types/recipe-book"
+import * as z from "zod/mini"
+import { OrderSchema } from "#/types/order"
+import { RecipeSchema } from "#/types/recipe-book"
 
 const FILE_NAME = "cakeculator-recipes.json"
 const DRIVE_FILES_URL = "https://www.googleapis.com/drive/v3/files"
 const DRIVE_UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files"
 const LAST_SYNCED_KEY = "cakeculator-last-synced"
 
-export type CloudData = {
-  schemaVersion: 3
-  cakeCost: { orders: Order[] }
-  recipeBook: { recipes: Recipe[] }
-}
+export const CloudDataSchema = z.object({
+  schemaVersion: z.literal(1),
+  cakeCost: z.object({ orders: z.array(OrderSchema) }),
+  recipeBook: z.object({ recipes: z.array(RecipeSchema) }),
+})
 
-function parseCloudData(raw: unknown): CloudData | null {
-  if (
-    raw &&
-    typeof raw === "object" &&
-    "schemaVersion" in raw &&
-    (raw as { schemaVersion: unknown }).schemaVersion === 3
-  ) {
-    const obj = raw as Partial<CloudData>
-    return {
-      schemaVersion: 3,
-      cakeCost: { orders: obj.cakeCost?.orders ?? [] },
-      recipeBook: { recipes: obj.recipeBook?.recipes ?? [] },
-    }
-  }
-
-  return null
-}
+export type CloudData = z.infer<typeof CloudDataSchema>
 
 function headers(accessToken: string): HeadersInit {
   return { Authorization: `Bearer ${accessToken}` }
@@ -69,11 +54,14 @@ export async function fetchCloudDataFromDrive(
   if (!res.ok) throw new Error(`Drive download failed: ${res.status}`)
 
   const raw: unknown = await res.json()
-  const parsed = parseCloudData(raw)
-  if (!parsed) return null
+  const parsed = CloudDataSchema.safeParse(raw)
+  if (!parsed.success) {
+    console.warn("[cakeculator] invalid cloud data shape; ignoring", parsed.error.issues)
+    return null
+  }
 
   return {
-    data: parsed,
+    data: parsed.data,
     modifiedTime: new Date(file.modifiedTime).getTime(),
   }
 }
