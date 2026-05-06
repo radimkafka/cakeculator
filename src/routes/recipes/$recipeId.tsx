@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { BookOpen, Cloud, Loader2, Plus, ShoppingBasket } from "lucide-react"
+import { BookOpen, Cloud, Loader2, Plus, RefreshCw, ShoppingBasket } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Button } from "#/components/ui/button"
 import {
@@ -32,7 +32,7 @@ function RecipePage() {
   const { recipeId } = Route.useParams()
   const navigate = useNavigate()
   const { state: authState } = useAuth()
-  const { syncStatus, error: syncError, pendingCloudData, saveAllToDrive, acceptCloudData, dismissCloudData } = useGDriveSync()
+  const { syncStatus, error: syncError, pendingCloudData, saveAllToDrive, refetchFromDrive, acceptCloudData, dismissCloudData } = useGDriveSync()
   const {
     recipes,
     setActiveRecipe,
@@ -243,6 +243,17 @@ function RecipePage() {
                 <Cloud className="h-4 w-4 mr-1.5" />
               )}
               {syncStatus === "saving" ? "Saving..." : "Save to Drive"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetchFromDrive()}
+              disabled={syncStatus === "saving" || syncStatus === "fetching"}
+            >
+              <RefreshCw
+                className={`h-4 w-4 mr-1.5${syncStatus === "fetching" ? " animate-spin" : ""}`}
+              />
+              {syncStatus === "fetching" ? "Refreshing..." : "Refetch"}
             </Button>
             {syncStatus === "saved" && (
               <span className="text-xs text-muted-foreground">Saved</span>

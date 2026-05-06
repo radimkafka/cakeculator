@@ -43,9 +43,13 @@ async function findDataFile(
 
 export async function fetchCloudDataFromDrive(
   accessToken: string,
+  notNewerThan: number = 0,
 ): Promise<{ data: CloudData; modifiedTime: number } | null> {
   const file = await findDataFile(accessToken)
   if (!file) return null
+
+  const modifiedTime = new Date(file.modifiedTime).getTime()
+  if (modifiedTime <= notNewerThan) return null
 
   const res = await fetch(`${DRIVE_FILES_URL}/${file.id}?alt=media`, {
     headers: headers(accessToken),
@@ -60,10 +64,7 @@ export async function fetchCloudDataFromDrive(
     return null
   }
 
-  return {
-    data: parsed.data,
-    modifiedTime: new Date(file.modifiedTime).getTime(),
-  }
+  return { data: parsed.data, modifiedTime }
 }
 
 export function loadLastSyncedAt(): number {

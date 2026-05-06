@@ -31,6 +31,7 @@ type GDriveSyncContextValue = {
   error: string | null
   pendingCloudData: CloudData | null
   saveAllToDrive: () => Promise<void>
+  refetchFromDrive: () => Promise<void>
   acceptCloudData: () => CloudData
   dismissCloudData: () => void
 }
@@ -42,49 +43,51 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle")
   const [error, setError] = useState<string | null>(null)
   const [pendingCloudData, setPendingCloudData] = useState<CloudData | null>(null)
-  const fetchedRef = useRef(false)
+  const inFlightRef = useRef(false)
+
+  const refetchFromDrive = useCallback(async () => {
+    if (authState.status !== "authenticated" || !authState.accessToken) return
+    if (inFlightRef.current) return
+    inFlightRef.current = true
+
+    setSyncStatus("fetching")
+    setError(null)
+
+    try {
+      const result = await fetchCloudDataFromDrive(authState.accessToken, loadLastSyncedAt())
+
+      if (result) {
+        setPendingCloudData(result.data)
+      }
+
+      setSyncStatus("idle")
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to fetch from Google Drive"
+      if (message.includes("401")) {
+        setError("Session expired, please log in again")
+      } else {
+        setError("Could not reach Google Drive")
+      }
+      setSyncStatus("error")
+    } finally {
+      inFlightRef.current = false
+    }
+  }, [authState.status, authState.accessToken])
 
   useEffect(() => {
-    if (authState.status !== "authenticated" || !authState.accessToken || fetchedRef.current) return
-    fetchedRef.current = true
+    if (authState.status !== "authenticated" || !authState.accessToken) return
+    refetchFromDrive()
+  }, [authState.status, authState.accessToken, refetchFromDrive])
 
-    let cancelled = false
-
-    async function fetchCloud() {
-      setSyncStatus("fetching")
-      setError(null)
-
-      try {
-        const result = await fetchCloudDataFromDrive(authState.accessToken!)
-        if (cancelled) return
-
-        if (!result) {
-          setSyncStatus("idle")
-          return
-        }
-
-        const lastSynced = loadLastSyncedAt()
-
-        if (result.modifiedTime > lastSynced) {
-          setPendingCloudData(result.data)
-        }
-
-        setSyncStatus("idle")
-      } catch (err) {
-        if (cancelled) return
-        const message = err instanceof Error ? err.message : "Failed to fetch from Google Drive"
-        if (message.includes("401")) {
-          setError("Session expired, please log in again")
-        } else {
-          setError("Could not reach Google Drive")
-        }
-        setSyncStatus("error")
+  useEffect(() => {
+    function onVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        refetchFromDrive()
       }
     }
-
-    fetchCloud()
-    return () => { cancelled = true }
-  }, [authState.status, authState.accessToken])
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange)
+  }, [refetchFromDrive])
 
   const saveAllToDrive = useCallback(
     async () => {
@@ -137,6 +140,7 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
     error,
     pendingCloudData,
     saveAllToDrive,
+    refetchFromDrive,
     acceptCloudData,
     dismissCloudData,
   }
