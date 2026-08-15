@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, DollarSign, Scaling } from "lucide-react";
+import { BookOpen, Cylinder, DollarSign, Scaling } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: HomePage });
 
@@ -49,6 +49,19 @@ function HomePage() {
               </div>
               <p className="text-muted-foreground text-sm">
                 Calculate the ingredient multiplier when switching between round pan sizes.
+              </p>
+            </article>
+          </Link>
+          <Link to="/calculators/pan-converter" className="block no-underline">
+            <article className="bg-card border-2 border-border rounded-md p-6 shadow-[4px_4px_0px_0px_var(--border)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-secondary/20 rounded-md p-1.5">
+                  <Cylinder className="h-5 w-5 text-secondary" />
+                </div>
+                <h3 className="font-semibold text-card-foreground text-lg">Pan Converter</h3>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Find the equivalent round pan diameter for a rectangular baking dish.
               </p>
             </article>
           </Link>
