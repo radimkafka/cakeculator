@@ -1,13 +1,13 @@
-import { useState } from "react"
-import { Check, ChevronDown, Copy, Pencil, Plus, Trash2 } from "lucide-react"
-import { Button } from "#/components/ui/button"
+import { useState } from "react";
+import { Check, ChevronDown, Copy, Pencil, Plus, Trash2 } from "lucide-react";
+import { Button } from "#/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu"
+} from "#/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,18 +17,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "#/components/ui/alert-dialog"
-import type { Recipe } from "#/types/recipe-book"
+} from "#/components/ui/alert-dialog";
+import type { Recipe } from "#/types/recipe-book";
 
 type RecipeBookSwitcherProps = {
-  recipes: Recipe[]
-  activeRecipe: Recipe
-  onSelectRecipe: (id: string) => void
-  onCreateRecipe: () => void
-  onRenameRecipe: (id: string, name: string) => void
-  onCopyRecipe: (id: string) => void
-  onDeleteRecipe: (id: string) => void
-}
+  recipes: Recipe[];
+  activeRecipe: Recipe;
+  onSelectRecipe: (id: string) => void;
+  onCreateRecipe: () => void;
+  onRenameRecipe: (id: string, name: string) => void;
+  onCopyRecipe: (id: string) => void;
+  onDeleteRecipe: (id: string) => void;
+};
 
 export default function RecipeBookSwitcher({
   recipes,
@@ -39,19 +39,19 @@ export default function RecipeBookSwitcher({
   onCopyRecipe,
   onDeleteRecipe,
 }: RecipeBookSwitcherProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editValue, setEditValue] = useState("")
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   function startEditing() {
-    setEditValue(activeRecipe.name)
-    setIsEditing(true)
+    setEditValue(activeRecipe.name);
+    setIsEditing(true);
   }
 
   function saveEdit() {
-    const trimmed = editValue.trim()
-    onRenameRecipe(activeRecipe.id, trimmed || "Untitled Recipe")
-    setIsEditing(false)
+    const trimmed = editValue.trim();
+    onRenameRecipe(activeRecipe.id, trimmed || "Untitled Recipe");
+    setIsEditing(false);
   }
 
   return (
@@ -64,7 +64,7 @@ export default function RecipeBookSwitcher({
           onBlur={saveEdit}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === "Escape") {
-              e.currentTarget.blur()
+              e.currentTarget.blur();
             }
           }}
           autoFocus
@@ -75,7 +75,7 @@ export default function RecipeBookSwitcher({
           <h1
             onClick={startEditing}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") startEditing()
+              if (e.key === "Enter" || e.key === " ") startEditing();
             }}
             tabIndex={0}
             role="button"
@@ -111,28 +111,19 @@ export default function RecipeBookSwitcher({
             className="border-2 border-border shadow-[4px_4px_0px_0px_var(--border)] min-w-[200px]"
           >
             {recipes.map((recipe) => (
-              <DropdownMenuItem
-                key={recipe.id}
-                onSelect={() => onSelectRecipe(recipe.id)}
-              >
+              <DropdownMenuItem key={recipe.id} onSelect={() => onSelectRecipe(recipe.id)}>
                 {recipe.id === activeRecipe.id ? (
                   <Check className="h-4 w-4 text-foreground" />
                 ) : (
                   <span className="w-4" />
                 )}
-                <span
-                  className={
-                    recipe.id === activeRecipe.id ? "font-bold" : ""
-                  }
-                >
+                <span className={recipe.id === activeRecipe.id ? "font-bold" : ""}>
                   {recipe.name}
                 </span>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => onCopyRecipe(activeRecipe.id)}
-            >
+            <DropdownMenuItem onSelect={() => onCopyRecipe(activeRecipe.id)}>
               <Copy className="h-4 w-4" />
               Duplicate
             </DropdownMenuItem>
@@ -173,5 +164,5 @@ export default function RecipeBookSwitcher({
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

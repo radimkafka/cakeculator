@@ -1,14 +1,14 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { BookOpen, DollarSign, Scaling } from 'lucide-react'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { BookOpen, DollarSign, Scaling } from "lucide-react";
 
-export const Route = createFileRoute('/')({ component: HomePage })
+export const Route = createFileRoute("/")({ component: HomePage });
 
 function getGreeting(): string {
-  const hour = new Date().getHours()
-  if (hour >= 5 && hour < 12) return 'Good morning!'
-  if (hour >= 12 && hour < 17) return 'Good afternoon!'
-  if (hour >= 17 && hour < 21) return 'Good evening!'
-  return 'Good night!'
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "Good morning!";
+  if (hour >= 12 && hour < 17) return "Good afternoon!";
+  if (hour >= 17 && hour < 21) return "Good evening!";
+  return "Good night!";
 }
 
 function HomePage() {
@@ -32,9 +32,7 @@ function HomePage() {
                 <div className="bg-secondary/20 rounded-md p-1.5">
                   <DollarSign className="h-5 w-5 text-secondary" />
                 </div>
-                <h3 className="font-semibold text-card-foreground text-lg">
-                  Cake Cost
-                </h3>
+                <h3 className="font-semibold text-card-foreground text-lg">Cake Cost</h3>
               </div>
               <p className="text-muted-foreground text-sm">
                 Calculate the total cost of your cake based on ingredients and portions.
@@ -47,9 +45,7 @@ function HomePage() {
                 <div className="bg-secondary/20 rounded-md p-1.5">
                   <Scaling className="h-5 w-5 text-secondary" />
                 </div>
-                <h3 className="font-semibold text-card-foreground text-lg">
-                  Pan Scaling
-                </h3>
+                <h3 className="font-semibold text-card-foreground text-lg">Pan Scaling</h3>
               </div>
               <p className="text-muted-foreground text-sm">
                 Calculate the ingredient multiplier when switching between round pan sizes.
@@ -70,9 +66,7 @@ function HomePage() {
                 <div className="bg-secondary/20 rounded-md p-1.5">
                   <BookOpen className="h-5 w-5 text-secondary" />
                 </div>
-                <h3 className="font-semibold text-card-foreground text-lg">
-                  Recipes
-                </h3>
+                <h3 className="font-semibold text-card-foreground text-lg">Recipes</h3>
               </div>
               <p className="text-muted-foreground text-sm">
                 Save and organize your baking recipes.
@@ -82,5 +76,5 @@ function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

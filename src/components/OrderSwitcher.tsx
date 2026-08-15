@@ -1,13 +1,13 @@
-import { useState } from "react"
-import { Check, ChevronDown, Copy, Pencil, Plus, Trash2 } from "lucide-react"
-import { Button } from "#/components/ui/button"
+import { useState } from "react";
+import { Check, ChevronDown, Copy, Pencil, Plus, Trash2 } from "lucide-react";
+import { Button } from "#/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu"
+} from "#/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,18 +17,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "#/components/ui/alert-dialog"
-import type { Order } from "#/types/order"
+} from "#/components/ui/alert-dialog";
+import type { Order } from "#/types/order";
 
 type OrderSwitcherProps = {
-  orders: Order[]
-  activeOrder: Order
-  onSelectOrder: (id: string) => void
-  onCreateOrder: () => void
-  onRenameOrder: (id: string, name: string) => void
-  onCopyOrder: (id: string) => void
-  onDeleteOrder: (id: string) => void
-}
+  orders: Order[];
+  activeOrder: Order;
+  onSelectOrder: (id: string) => void;
+  onCreateOrder: () => void;
+  onRenameOrder: (id: string, name: string) => void;
+  onCopyOrder: (id: string) => void;
+  onDeleteOrder: (id: string) => void;
+};
 
 export default function OrderSwitcher({
   orders,
@@ -39,19 +39,19 @@ export default function OrderSwitcher({
   onCopyOrder,
   onDeleteOrder,
 }: OrderSwitcherProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editValue, setEditValue] = useState("")
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   function startEditing() {
-    setEditValue(activeOrder.name)
-    setIsEditing(true)
+    setEditValue(activeOrder.name);
+    setIsEditing(true);
   }
 
   function saveEdit() {
-    const trimmed = editValue.trim()
-    onRenameOrder(activeOrder.id, trimmed || "Untitled Order")
-    setIsEditing(false)
+    const trimmed = editValue.trim();
+    onRenameOrder(activeOrder.id, trimmed || "Untitled Order");
+    setIsEditing(false);
   }
 
   return (
@@ -64,7 +64,7 @@ export default function OrderSwitcher({
           onBlur={saveEdit}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === "Escape") {
-              e.currentTarget.blur()
+              e.currentTarget.blur();
             }
           }}
           autoFocus
@@ -75,7 +75,7 @@ export default function OrderSwitcher({
           <h1
             onClick={startEditing}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") startEditing()
+              if (e.key === "Enter" || e.key === " ") startEditing();
             }}
             tabIndex={0}
             role="button"
@@ -111,28 +111,17 @@ export default function OrderSwitcher({
             className="border-2 border-border shadow-[4px_4px_0px_0px_var(--border)] min-w-[200px]"
           >
             {orders.map((order) => (
-              <DropdownMenuItem
-                key={order.id}
-                onSelect={() => onSelectOrder(order.id)}
-              >
+              <DropdownMenuItem key={order.id} onSelect={() => onSelectOrder(order.id)}>
                 {order.id === activeOrder.id ? (
                   <Check className="h-4 w-4 text-foreground" />
                 ) : (
                   <span className="w-4" />
                 )}
-                <span
-                  className={
-                    order.id === activeOrder.id ? "font-bold" : ""
-                  }
-                >
-                  {order.name}
-                </span>
+                <span className={order.id === activeOrder.id ? "font-bold" : ""}>{order.name}</span>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => onCopyOrder(activeOrder.id)}
-            >
+            <DropdownMenuItem onSelect={() => onCopyOrder(activeOrder.id)}>
               <Copy className="h-4 w-4" />
               Duplicate
             </DropdownMenuItem>
@@ -163,15 +152,12 @@ export default function OrderSwitcher({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={() => onDeleteOrder(activeOrder.id)}
-            >
+            <AlertDialogAction variant="destructive" onClick={() => onDeleteOrder(activeOrder.id)}>
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

@@ -1,16 +1,16 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { loadRecipes, saveRecipes } from "./recipe-book-storage"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { loadRecipes, saveRecipes } from "./recipe-book-storage";
 
 describe("loadRecipes", () => {
-  let warn: ReturnType<typeof vi.spyOn>
+  let warn: ReturnType<typeof vi.spyOn>;
   beforeEach(() => {
-    window.localStorage.clear()
-    warn = vi.spyOn(console, "warn").mockImplementation(() => {})
-  })
+    window.localStorage.clear();
+    warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
   afterEach(() => {
-    warn.mockRestore()
-  })
+    warn.mockRestore();
+  });
 
   it("round-trips a valid array", () => {
     const recipe = {
@@ -19,11 +19,11 @@ describe("loadRecipes", () => {
       createdAt: 123,
       diameter: 20,
       ingredients: [{ id: "i1", name: "Flour", amount: 100, unit: "g" as const }],
-    }
-    saveRecipes([recipe])
-    expect(loadRecipes()).toEqual([recipe])
-    expect(warn).not.toHaveBeenCalled()
-  })
+    };
+    saveRecipes([recipe]);
+    expect(loadRecipes()).toEqual([recipe]);
+    expect(warn).not.toHaveBeenCalled();
+  });
 
   it("defaults legacy ingredients without a unit to grams", () => {
     window.localStorage.setItem(
@@ -37,39 +37,39 @@ describe("loadRecipes", () => {
           ingredients: [{ id: "i1", name: "Flour", amount: 100 }],
         },
       ]),
-    )
-    const result = loadRecipes()
-    expect(result[0]?.ingredients[0]?.unit).toBe("g")
-    expect(warn).not.toHaveBeenCalled()
-  })
+    );
+    const result = loadRecipes();
+    expect(result[0]?.ingredients[0]?.unit).toBe("g");
+    expect(warn).not.toHaveBeenCalled();
+  });
 
   it("returns a default recipe when storage is empty", () => {
-    const result = loadRecipes()
-    expect(result).toHaveLength(1)
-    expect(result[0]?.ingredients).toEqual([])
-  })
+    const result = loadRecipes();
+    expect(result).toHaveLength(1);
+    expect(result[0]?.ingredients).toEqual([]);
+  });
 
   it("returns a default recipe when an empty array is stored", () => {
-    window.localStorage.setItem("cakeculator-recipe-book", "[]")
-    const result = loadRecipes()
-    expect(result).toHaveLength(1)
-    expect(result[0]?.ingredients).toEqual([])
-  })
+    window.localStorage.setItem("cakeculator-recipe-book", "[]");
+    const result = loadRecipes();
+    expect(result).toHaveLength(1);
+    expect(result[0]?.ingredients).toEqual([]);
+  });
 
   it("falls back to default on malformed JSON", () => {
-    window.localStorage.setItem("cakeculator-recipe-book", "{not json")
-    const result = loadRecipes()
-    expect(result).toHaveLength(1)
-  })
+    window.localStorage.setItem("cakeculator-recipe-book", "{not json");
+    const result = loadRecipes();
+    expect(result).toHaveLength(1);
+  });
 
   it("falls back to default and warns on shape mismatch", () => {
     window.localStorage.setItem(
       "cakeculator-recipe-book",
       JSON.stringify([{ id: "x", name: "missing fields" }]),
-    )
-    const result = loadRecipes()
-    expect(result).toHaveLength(1)
-    expect(result[0]?.id).not.toBe("x")
-    expect(warn).toHaveBeenCalledOnce()
-  })
-})
+    );
+    const result = loadRecipes();
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).not.toBe("x");
+    expect(warn).toHaveBeenCalledOnce();
+  });
+});

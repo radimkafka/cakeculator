@@ -6,134 +6,131 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from "react"
-import { useAuth } from "#/contexts/AuthContext"
+} from "react";
+import { useAuth } from "#/contexts/AuthContext";
 import {
   fetchCloudDataFromDrive,
   loadLastSyncedAt,
   saveLastSyncedAt,
   saveCloudDataToDrive,
   type CloudData,
-} from "#/lib/gdrive-storage"
+} from "#/lib/gdrive-storage";
 import {
   loadOrders as loadCakeCostOrders,
   saveOrders as saveCakeCostOrders,
-} from "#/lib/order-storage"
+} from "#/lib/order-storage";
 import {
   loadRecipes as loadRecipeBookRecipes,
   saveRecipes as saveRecipeBookRecipes,
-} from "#/lib/recipe-book-storage"
+} from "#/lib/recipe-book-storage";
 
-type SyncStatus = "idle" | "fetching" | "saving" | "error" | "saved"
+type SyncStatus = "idle" | "fetching" | "saving" | "error" | "saved";
 
 type GDriveSyncContextValue = {
-  syncStatus: SyncStatus
-  error: string | null
-  pendingCloudData: CloudData | null
-  saveAllToDrive: () => Promise<void>
-  refetchFromDrive: () => Promise<void>
-  acceptCloudData: () => CloudData
-  dismissCloudData: () => void
-}
+  syncStatus: SyncStatus;
+  error: string | null;
+  pendingCloudData: CloudData | null;
+  saveAllToDrive: () => Promise<void>;
+  refetchFromDrive: () => Promise<void>;
+  acceptCloudData: () => CloudData;
+  dismissCloudData: () => void;
+};
 
-const GDriveSyncContext = createContext<GDriveSyncContextValue | null>(null)
+const GDriveSyncContext = createContext<GDriveSyncContextValue | null>(null);
 
 export function GDriveSyncProvider({ children }: { children: ReactNode }) {
-  const { state: authState } = useAuth()
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle")
-  const [error, setError] = useState<string | null>(null)
-  const [pendingCloudData, setPendingCloudData] = useState<CloudData | null>(null)
-  const inFlightRef = useRef(false)
+  const { state: authState } = useAuth();
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [pendingCloudData, setPendingCloudData] = useState<CloudData | null>(null);
+  const inFlightRef = useRef(false);
 
   const refetchFromDrive = useCallback(async () => {
-    if (authState.status !== "authenticated" || !authState.accessToken) return
-    if (inFlightRef.current) return
-    inFlightRef.current = true
+    if (authState.status !== "authenticated" || !authState.accessToken) return;
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
 
-    setSyncStatus("fetching")
-    setError(null)
+    setSyncStatus("fetching");
+    setError(null);
 
     try {
-      const result = await fetchCloudDataFromDrive(authState.accessToken, loadLastSyncedAt())
+      const result = await fetchCloudDataFromDrive(authState.accessToken, loadLastSyncedAt());
 
       if (result) {
-        setPendingCloudData(result.data)
+        setPendingCloudData(result.data);
       }
 
-      setSyncStatus("idle")
+      setSyncStatus("idle");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch from Google Drive"
+      const message = err instanceof Error ? err.message : "Failed to fetch from Google Drive";
       if (message.includes("401")) {
-        setError("Session expired, please log in again")
+        setError("Session expired, please log in again");
       } else {
-        setError("Could not reach Google Drive")
+        setError("Could not reach Google Drive");
       }
-      setSyncStatus("error")
+      setSyncStatus("error");
     } finally {
-      inFlightRef.current = false
+      inFlightRef.current = false;
     }
-  }, [authState.status, authState.accessToken])
+  }, [authState.status, authState.accessToken]);
 
   useEffect(() => {
-    if (authState.status !== "authenticated" || !authState.accessToken) return
-    refetchFromDrive()
-  }, [authState.status, authState.accessToken, refetchFromDrive])
+    if (authState.status !== "authenticated" || !authState.accessToken) return;
+    refetchFromDrive();
+  }, [authState.status, authState.accessToken, refetchFromDrive]);
 
   useEffect(() => {
     function onVisibilityChange() {
       if (document.visibilityState === "visible") {
-        refetchFromDrive()
+        refetchFromDrive();
       }
     }
-    document.addEventListener("visibilitychange", onVisibilityChange)
-    return () => document.removeEventListener("visibilitychange", onVisibilityChange)
-  }, [refetchFromDrive])
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, [refetchFromDrive]);
 
-  const saveAllToDrive = useCallback(
-    async () => {
-      if (!authState.accessToken) return
+  const saveAllToDrive = useCallback(async () => {
+    if (!authState.accessToken) return;
 
-      setSyncStatus("saving")
-      setError(null)
+    setSyncStatus("saving");
+    setError(null);
 
-      try {
-        const data: CloudData = {
-          schemaVersion: 1,
-          cakeCost: { orders: loadCakeCostOrders() },
-          recipeBook: { recipes: loadRecipeBookRecipes() },
-        }
-        await saveCloudDataToDrive(authState.accessToken, data)
-        saveLastSyncedAt(Date.now())
-        setSyncStatus("saved")
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Save failed"
-        if (message.includes("401")) {
-          setError("Session expired, please log in again")
-        } else {
-          setError("Save failed, try again")
-        }
-        setSyncStatus("error")
+    try {
+      const data: CloudData = {
+        schemaVersion: 1,
+        cakeCost: { orders: loadCakeCostOrders() },
+        recipeBook: { recipes: loadRecipeBookRecipes() },
+      };
+      await saveCloudDataToDrive(authState.accessToken, data);
+      saveLastSyncedAt(Date.now());
+      setSyncStatus("saved");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Save failed";
+      if (message.includes("401")) {
+        setError("Session expired, please log in again");
+      } else {
+        setError("Save failed, try again");
       }
-    },
-    [authState.accessToken],
-  )
+      setSyncStatus("error");
+    }
+  }, [authState.accessToken]);
 
   const acceptCloudData = useCallback((): CloudData => {
     const data: CloudData = pendingCloudData ?? {
       schemaVersion: 1,
       cakeCost: { orders: [] },
       recipeBook: { recipes: [] },
-    }
-    saveCakeCostOrders(data.cakeCost.orders)
-    saveRecipeBookRecipes(data.recipeBook.recipes)
-    setPendingCloudData(null)
-    saveLastSyncedAt(Date.now())
-    return data
-  }, [pendingCloudData])
+    };
+    saveCakeCostOrders(data.cakeCost.orders);
+    saveRecipeBookRecipes(data.recipeBook.recipes);
+    setPendingCloudData(null);
+    saveLastSyncedAt(Date.now());
+    return data;
+  }, [pendingCloudData]);
 
   const dismissCloudData = useCallback(() => {
-    setPendingCloudData(null)
-  }, [])
+    setPendingCloudData(null);
+  }, []);
 
   const value: GDriveSyncContextValue = {
     syncStatus,
@@ -143,17 +140,13 @@ export function GDriveSyncProvider({ children }: { children: ReactNode }) {
     refetchFromDrive,
     acceptCloudData,
     dismissCloudData,
-  }
+  };
 
-  return (
-    <GDriveSyncContext.Provider value={value}>
-      {children}
-    </GDriveSyncContext.Provider>
-  )
+  return <GDriveSyncContext.Provider value={value}>{children}</GDriveSyncContext.Provider>;
 }
 
 export function useGDriveSync(): GDriveSyncContextValue {
-  const ctx = useContext(GDriveSyncContext)
-  if (!ctx) throw new Error("useGDriveSync must be used within GDriveSyncProvider")
-  return ctx
+  const ctx = useContext(GDriveSyncContext);
+  if (!ctx) throw new Error("useGDriveSync must be used within GDriveSyncProvider");
+  return ctx;
 }

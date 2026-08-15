@@ -1,47 +1,45 @@
-import { Sun, Moon } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState } from "react";
 
-type ThemeMode = "light" | "dark"
+type ThemeMode = "light" | "dark";
 
 function getInitialMode(): ThemeMode {
   if (typeof window === "undefined") {
-    return "light"
+    return "light";
   }
 
-  const stored = window.localStorage.getItem("theme")
+  const stored = window.localStorage.getItem("theme");
   if (stored === "light" || stored === "dark") {
-    return stored
+    return stored;
   }
 
   // Fall back to device preference
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light"
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function applyTheme(mode: ThemeMode) {
-  document.documentElement.classList.remove("light", "dark")
-  document.documentElement.classList.add(mode)
-  document.documentElement.style.colorScheme = mode
+  document.documentElement.classList.remove("light", "dark");
+  document.documentElement.classList.add(mode);
+  document.documentElement.style.colorScheme = mode;
 }
 
 export default function ThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>("light")
+  const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {
-    const initialMode = getInitialMode()
-    setMode(initialMode)
-    applyTheme(initialMode)
-  }, [])
+    const initialMode = getInitialMode();
+    setMode(initialMode);
+    applyTheme(initialMode);
+  }, []);
 
   function toggle() {
-    const next: ThemeMode = mode === "light" ? "dark" : "light"
-    setMode(next)
-    applyTheme(next)
-    window.localStorage.setItem("theme", next)
+    const next: ThemeMode = mode === "light" ? "dark" : "light";
+    setMode(next);
+    applyTheme(next);
+    window.localStorage.setItem("theme", next);
   }
 
-  const label = mode === "light" ? "Switch to dark mode" : "Switch to light mode"
+  const label = mode === "light" ? "Switch to dark mode" : "Switch to light mode";
 
   return (
     <button
@@ -53,5 +51,5 @@ export default function ThemeToggle() {
     >
       {mode === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
     </button>
-  )
+  );
 }

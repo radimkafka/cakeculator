@@ -1,17 +1,17 @@
-import { Check, ChevronDown } from "lucide-react"
+import { Check, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu"
-import { UNITS, UNIT_IDS, type UnitId } from "#/lib/units"
+} from "#/components/ui/dropdown-menu";
+import { UNITS, UNIT_IDS, type UnitId } from "#/lib/units";
 
 type UnitSelectorProps = {
-  value: UnitId
-  onChange: (unit: UnitId) => void
-  ariaLabel?: string
-}
+  value: UnitId;
+  onChange: (unit: UnitId) => void;
+  ariaLabel?: string;
+};
 
 export default function UnitSelector({
   value,
@@ -41,12 +41,10 @@ export default function UnitSelector({
             ) : (
               <span className="w-4" />
             )}
-            <span className={id === value ? "font-bold" : ""}>
-              {UNITS[id].label}
-            </span>
+            <span className={id === value ? "font-bold" : ""}>{UNITS[id].label}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

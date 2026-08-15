@@ -1,10 +1,10 @@
-import * as z from "zod/mini"
-import { type Recipe, RecipeSchema } from "#/types/recipe-book"
-import { generateId } from "#/lib/id"
-import { parseOrFallback } from "#/lib/safe-parse"
+import * as z from "zod/mini";
+import { type Recipe, RecipeSchema } from "#/types/recipe-book";
+import { generateId } from "#/lib/id";
+import { parseOrFallback } from "#/lib/safe-parse";
 
-const RECIPES_KEY = "cakeculator-recipe-book"
-const ACTIVE_RECIPE_KEY = "cakeculator-active-recipe-book"
+const RECIPES_KEY = "cakeculator-recipe-book";
+const ACTIVE_RECIPE_KEY = "cakeculator-active-recipe-book";
 
 function createDefaultRecipe(): Recipe {
   return {
@@ -13,52 +13,52 @@ function createDefaultRecipe(): Recipe {
     createdAt: Date.now(),
     diameter: 0,
     ingredients: [],
-  }
+  };
 }
 
 export function loadRecipes(): Recipe[] {
-  if (typeof window === "undefined") return [createDefaultRecipe()]
+  if (typeof window === "undefined") return [createDefaultRecipe()];
 
   try {
-    const raw = window.localStorage.getItem(RECIPES_KEY)
+    const raw = window.localStorage.getItem(RECIPES_KEY);
     if (raw) {
-      const parsed: unknown = JSON.parse(raw)
-      const recipes = parseOrFallback(z.array(RecipeSchema), parsed, [], "recipes")
-      return recipes.length > 0 ? recipes : [createDefaultRecipe()]
+      const parsed: unknown = JSON.parse(raw);
+      const recipes = parseOrFallback(z.array(RecipeSchema), parsed, [], "recipes");
+      return recipes.length > 0 ? recipes : [createDefaultRecipe()];
     }
 
-    const defaultRecipes = [createDefaultRecipe()]
-    saveRecipes(defaultRecipes)
-    return defaultRecipes
+    const defaultRecipes = [createDefaultRecipe()];
+    saveRecipes(defaultRecipes);
+    return defaultRecipes;
   } catch {
-    return [createDefaultRecipe()]
+    return [createDefaultRecipe()];
   }
 }
 
 export function saveRecipes(recipes: Recipe[]): void {
-  if (typeof window === "undefined") return
+  if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes))
+    window.localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
   } catch (err) {
     if (err instanceof Error && err.name === "QuotaExceededError") {
-      console.warn("[cakeculator] localStorage quota exceeded — recipe book not saved")
+      console.warn("[cakeculator] localStorage quota exceeded — recipe book not saved");
     }
   }
 }
 
 export function loadActiveRecipeId(): string | null {
-  if (typeof window === "undefined") return null
+  if (typeof window === "undefined") return null;
   try {
-    return window.localStorage.getItem(ACTIVE_RECIPE_KEY)
+    return window.localStorage.getItem(ACTIVE_RECIPE_KEY);
   } catch {
-    return null
+    return null;
   }
 }
 
 export function saveActiveRecipeId(id: string): void {
-  if (typeof window === "undefined") return
+  if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(ACTIVE_RECIPE_KEY, id)
+    window.localStorage.setItem(ACTIVE_RECIPE_KEY, id);
   } catch {
     // Ignore storage errors for active recipe tracking
   }

@@ -26,6 +26,6 @@ if (!rootElement.innerHTML) {
       <GDriveSyncProvider>
         <RouterProvider router={router} />
       </GDriveSyncProvider>
-    </AuthProvider>
+    </AuthProvider>,
   );
 }

@@ -1,5 +1,5 @@
-import { LogIn, LogOut, AlertCircle, Loader2 } from 'lucide-react'
-import { useAuth } from '#/contexts/AuthContext'
+import { LogIn, LogOut, AlertCircle, Loader2 } from "lucide-react";
+import { useAuth } from "#/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,20 +7,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '#/components/ui/dropdown-menu'
+} from "#/components/ui/dropdown-menu";
 
 export default function UserMenu() {
-  const { state, login, logout } = useAuth()
+  const { state, login, logout } = useAuth();
 
-  if (state.status === 'loading') {
+  if (state.status === "loading") {
     return (
       <span className="inline-flex h-8 w-8 items-center justify-center">
         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
       </span>
-    )
+    );
   }
 
-  if (state.status === 'idle') {
+  if (state.status === "idle") {
     return (
       <button
         type="button"
@@ -30,11 +30,11 @@ export default function UserMenu() {
         <LogIn className="h-4 w-4" />
         <span className="hidden sm:inline">Sign in</span>
       </button>
-    )
+    );
   }
 
-  const user = state.user
-  const isExpired = state.status === 'expired'
+  const user = state.user;
+  const isExpired = state.status === "expired";
 
   return (
     <DropdownMenu>
@@ -52,7 +52,7 @@ export default function UserMenu() {
             />
           ) : (
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-medium text-secondary-foreground">
-              {user?.name?.charAt(0) ?? '?'}
+              {user?.name?.charAt(0) ?? "?"}
             </span>
           )}
           {isExpired && (
@@ -81,5 +81,5 @@ export default function UserMenu() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -1,28 +1,24 @@
-import { X } from "lucide-react"
-import type { Ingredient } from "#/types/ingredient"
-import { calculateCost } from "#/lib/calculator"
-import { UNITS } from "#/lib/units"
-import UnitSelector from "#/components/UnitSelector"
+import { X } from "lucide-react";
+import type { Ingredient } from "#/types/ingredient";
+import { calculateCost } from "#/lib/calculator";
+import { UNITS } from "#/lib/units";
+import UnitSelector from "#/components/UnitSelector";
 
 type IngredientRowProps = {
-  ingredient: Ingredient
-  onChange: (id: string, patch: Partial<Omit<Ingredient, "id">>) => void
-  onRemove: (id: string) => void
-}
+  ingredient: Ingredient;
+  onChange: (id: string, patch: Partial<Omit<Ingredient, "id">>) => void;
+  onRemove: (id: string) => void;
+};
 
 const inputClasses =
-  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow"
+  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow";
 
 const badgeClasses =
-  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0"
+  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0";
 
-export default function IngredientRow({
-  ingredient,
-  onChange,
-  onRemove,
-}: IngredientRowProps) {
-  const cost = calculateCost(ingredient.unitPrice, ingredient.amount, ingredient.unit)
-  const priceUnitLabel = UNITS[ingredient.unit].priceUnitLabel
+export default function IngredientRow({ ingredient, onChange, onRemove }: IngredientRowProps) {
+  const cost = calculateCost(ingredient.unitPrice, ingredient.amount, ingredient.unit);
+  const priceUnitLabel = UNITS[ingredient.unit].priceUnitLabel;
 
   return (
     <div className="bg-card border-2 border-border rounded-md p-4 shadow-[4px_4px_0px_0px_var(--border)] flex flex-col gap-3 md:grid md:grid-cols-[1fr_auto_auto_auto_auto] md:items-end md:gap-3">
@@ -35,9 +31,7 @@ export default function IngredientRow({
           <input
             type="text"
             value={ingredient.name}
-            onChange={(e) =>
-              onChange(ingredient.id, { name: e.target.value })
-            }
+            onChange={(e) => onChange(ingredient.id, { name: e.target.value })}
             placeholder="Ingredient name"
             maxLength={60}
             className={`${inputClasses} w-full`}
@@ -106,13 +100,9 @@ export default function IngredientRow({
 
       {/* Cost display */}
       <div className="flex items-center gap-2 md:min-w-[5rem] md:justify-end">
-        <span className="text-xs text-muted-foreground uppercase tracking-wide">
-          Cost
-        </span>
-        <span className="font-bold text-sm tabular-nums text-foreground">
-          {cost.toFixed(2)}
-        </span>
+        <span className="text-xs text-muted-foreground uppercase tracking-wide">Cost</span>
+        <span className="font-bold text-sm tabular-nums text-foreground">{cost.toFixed(2)}</span>
       </div>
     </div>
-  )
+  );
 }

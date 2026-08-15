@@ -1,38 +1,46 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { BookOpen, Cloud, Loader2, Plus, RefreshCw, ShoppingBasket } from "lucide-react"
-import { useEffect, useState } from "react"
-import { Button } from "#/components/ui/button"
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { BookOpen, Cloud, Loader2, Plus, RefreshCw, ShoppingBasket } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "#/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "#/components/ui/dialog"
-import RecipeBookIngredientRow from "#/components/RecipeBookIngredientRow"
-import RecipeBookSwitcher from "#/components/RecipeBookSwitcher"
-import { useAuth } from "#/contexts/AuthContext"
-import { useGDriveSync } from "#/contexts/GDriveSyncContext"
-import useOrders from "#/hooks/useOrders"
-import useRecipeBook from "#/hooks/useRecipeBook"
-import { panScalingCoefficient } from "#/lib/pan-scaling"
-import type { Ingredient } from "#/types/ingredient"
+} from "#/components/ui/dialog";
+import RecipeBookIngredientRow from "#/components/RecipeBookIngredientRow";
+import RecipeBookSwitcher from "#/components/RecipeBookSwitcher";
+import { useAuth } from "#/contexts/AuthContext";
+import { useGDriveSync } from "#/contexts/GDriveSyncContext";
+import useOrders from "#/hooks/useOrders";
+import useRecipeBook from "#/hooks/useRecipeBook";
+import { panScalingCoefficient } from "#/lib/pan-scaling";
+import type { Ingredient } from "#/types/ingredient";
 
 export const Route = createFileRoute("/recipes/$recipeId")({
   component: RecipePage,
-})
+});
 
 const inputClasses =
-  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow"
+  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow";
 
 const badgeClasses =
-  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0"
+  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0";
 
 function RecipePage() {
-  const { recipeId } = Route.useParams()
-  const navigate = useNavigate()
-  const { state: authState } = useAuth()
-  const { syncStatus, error: syncError, pendingCloudData, saveAllToDrive, refetchFromDrive, acceptCloudData, dismissCloudData } = useGDriveSync()
+  const { recipeId } = Route.useParams();
+  const navigate = useNavigate();
+  const { state: authState } = useAuth();
+  const {
+    syncStatus,
+    error: syncError,
+    pendingCloudData,
+    saveAllToDrive,
+    refetchFromDrive,
+    acceptCloudData,
+    dismissCloudData,
+  } = useGDriveSync();
   const {
     recipes,
     setActiveRecipe,
@@ -45,84 +53,84 @@ function RecipePage() {
     copyRecipe,
     deleteRecipe,
     replaceRecipes,
-  } = useRecipeBook()
-  const { createOrder } = useOrders()
+  } = useRecipeBook();
+  const { createOrder } = useOrders();
 
-  const activeRecipe = recipes.find((r) => r.id === recipeId) ?? recipes[0]
-  const ingredients = activeRecipe?.ingredients ?? []
+  const activeRecipe = recipes.find((r) => r.id === recipeId) ?? recipes[0];
+  const ingredients = activeRecipe?.ingredients ?? [];
 
-  const [orderDialogOpen, setOrderDialogOpen] = useState(false)
-  const [targetDiameter, setTargetDiameter] = useState(0)
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false);
+  const [targetDiameter, setTargetDiameter] = useState(0);
 
   function openCreateOrderDialog() {
-    if (!activeRecipe) return
-    setTargetDiameter(activeRecipe.diameter)
-    setOrderDialogOpen(true)
+    if (!activeRecipe) return;
+    setTargetDiameter(activeRecipe.diameter);
+    setOrderDialogOpen(true);
   }
 
   function handleCreateOrderFromRecipe() {
-    if (!activeRecipe) return
-    const coef = panScalingCoefficient(targetDiameter, activeRecipe.diameter)
-    if (coef === 0) return
+    if (!activeRecipe) return;
+    const coef = panScalingCoefficient(targetDiameter, activeRecipe.diameter);
+    if (coef === 0) return;
     const orderIngredients: Ingredient[] = activeRecipe.ingredients.map((ing) => ({
       id: crypto.randomUUID(),
       name: ing.name,
       unitPrice: 0,
       amount: Math.round(ing.amount * coef * 100) / 100,
       unit: ing.unit,
-    }))
-    const newOrderId = createOrder(activeRecipe.name, orderIngredients)
-    setOrderDialogOpen(false)
+    }));
+    const newOrderId = createOrder(activeRecipe.name, orderIngredients);
+    setOrderDialogOpen(false);
     navigate({
       to: "/calculators/cake-cost/$orderId",
       params: { orderId: newOrderId },
-    })
+    });
   }
 
   useEffect(() => {
-    if (!recipes.length) return
-    const exists = recipes.some((r) => r.id === recipeId)
+    if (!recipes.length) return;
+    const exists = recipes.some((r) => r.id === recipeId);
     if (!exists) {
       navigate({
         to: "/recipes/$recipeId",
         params: { recipeId: recipes[0].id },
         replace: true,
-      })
-      return
+      });
+      return;
     }
-    setActiveRecipe(recipeId)
+    setActiveRecipe(recipeId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipeId])
+  }, [recipeId]);
 
   function handleSelectRecipe(id: string) {
-    navigate({ to: "/recipes/$recipeId", params: { recipeId: id } })
+    navigate({ to: "/recipes/$recipeId", params: { recipeId: id } });
   }
 
   function handleCreateRecipe() {
-    const newId = createRecipe()
-    navigate({ to: "/recipes/$recipeId", params: { recipeId: newId } })
+    const newId = createRecipe();
+    navigate({ to: "/recipes/$recipeId", params: { recipeId: newId } });
   }
 
   function handleCopyRecipe(id: string) {
-    const newId = copyRecipe(id)
+    const newId = copyRecipe(id);
     if (newId) {
-      navigate({ to: "/recipes/$recipeId", params: { recipeId: newId } })
+      navigate({ to: "/recipes/$recipeId", params: { recipeId: newId } });
     }
   }
 
   function handleDeleteRecipe(id: string) {
-    const nextId = deleteRecipe(id)
+    const nextId = deleteRecipe(id);
     if (nextId) {
-      navigate({ to: "/recipes/$recipeId", params: { recipeId: nextId } })
+      navigate({ to: "/recipes/$recipeId", params: { recipeId: nextId } });
     }
   }
 
   function handleAcceptCloud() {
-    const data = acceptCloudData()
-    const cloudRecipes = data.recipeBook.recipes
+    const data = acceptCloudData();
+    const cloudRecipes = data.recipeBook.recipes;
     if (cloudRecipes.length > 0) {
-      replaceRecipes(cloudRecipes)
-      navigate({ to: "/recipes/$recipeId", params: { recipeId: cloudRecipes[0].id } })
+      replaceRecipes(cloudRecipes);
+      navigate({ to: "/recipes/$recipeId", params: { recipeId: cloudRecipes[0].id } });
     }
   }
 
@@ -184,10 +192,7 @@ function RecipePage() {
             variant="default"
             size="sm"
             onClick={openCreateOrderDialog}
-            disabled={
-              activeRecipe.ingredients.length === 0 ||
-              activeRecipe.diameter <= 0
-            }
+            disabled={activeRecipe.ingredients.length === 0 || activeRecipe.diameter <= 0}
             className="ml-auto"
           >
             <ShoppingBasket className="h-4 w-4 mr-1.5" />
@@ -199,10 +204,7 @@ function RecipePage() {
       <div className="flex flex-col gap-3">
         {ingredients.length === 0 ? (
           <div className="bg-card border-2 border-border rounded-md p-8 shadow-[4px_4px_0px_0px_var(--border)] text-center">
-            <BookOpen
-              size={32}
-              className="mx-auto mb-3 text-muted-foreground"
-            />
+            <BookOpen size={32} className="mx-auto mb-3 text-muted-foreground" />
             <p className="font-bold text-foreground">No ingredients yet</p>
             <p className="text-sm text-muted-foreground mt-1">
               Add your first ingredient to get started
@@ -219,12 +221,7 @@ function RecipePage() {
           ))
         )}
 
-        <Button
-          variant="default"
-          size="sm"
-          onClick={addIngredient}
-          className="self-start"
-        >
+        <Button variant="default" size="sm" onClick={addIngredient} className="self-start">
           <Plus className="h-4 w-4 mr-1.5" />
           Add Ingredient
         </Button>
@@ -255,9 +252,7 @@ function RecipePage() {
               />
               {syncStatus === "fetching" ? "Refreshing..." : "Refetch"}
             </Button>
-            {syncStatus === "saved" && (
-              <span className="text-xs text-muted-foreground">Saved</span>
-            )}
+            {syncStatus === "saved" && <span className="text-xs text-muted-foreground">Saved</span>}
             {syncStatus === "error" && syncError && (
               <span className="text-xs text-destructive">{syncError}</span>
             )}
@@ -278,9 +273,7 @@ function RecipePage() {
               <input
                 type="number"
                 value={targetDiameter || ""}
-                onChange={(e) =>
-                  setTargetDiameter(Number.parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => setTargetDiameter(Number.parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
                 step="1"
@@ -305,5 +298,5 @@ function RecipePage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

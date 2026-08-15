@@ -6,20 +6,20 @@ Cakeculator is a baking calculator app. It helps with recipe scaling, unit conve
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
-| Language | TypeScript (strict mode, `verbatimModuleSyntax`) |
-| Runtime | Bun |
-| Framework | React 19 |
-| Routing | TanStack Router (file-based, auto code-splitting, SPA — no SSR) |
-| Bundler | Vite 7 |
-| Styling | Tailwind CSS v4 (via `@tailwindcss/vite` plugin) |
-| Components | shadcn/ui (new-york style, no RSC) |
-| Class utils | CVA + clsx + tailwind-merge |
-| Icons | Lucide React |
-| Testing | Vitest + Testing Library (React + DOM + jsdom) |
-| Linter | OxLint |
-| Formatter | OxFmt |
+| Layer       | Tech                                                            |
+| ----------- | --------------------------------------------------------------- |
+| Language    | TypeScript (strict mode, `verbatimModuleSyntax`)                |
+| Runtime     | Bun                                                             |
+| Framework   | React 19                                                        |
+| Routing     | TanStack Router (file-based, auto code-splitting, SPA — no SSR) |
+| Bundler     | Vite 7                                                          |
+| Styling     | Tailwind CSS v4 (via `@tailwindcss/vite` plugin)                |
+| Components  | shadcn/ui (new-york style, no RSC)                              |
+| Class utils | CVA + clsx + tailwind-merge                                     |
+| Icons       | Lucide React                                                    |
+| Testing     | Vitest + Testing Library (React + DOM + jsdom)                  |
+| Linter      | OxLint                                                          |
+| Formatter   | OxFmt                                                           |
 
 ## Design System — Neobrutalism
 

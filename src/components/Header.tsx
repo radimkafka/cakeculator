@@ -1,7 +1,7 @@
-import { Link } from '@tanstack/react-router'
-import ThemeToggle from '#/components/ThemeToggle'
-import UserMenu from '#/components/UserMenu'
-import WakeLockToggle from '#/components/WakeLockToggle'
+import { Link } from "@tanstack/react-router";
+import ThemeToggle from "#/components/ThemeToggle";
+import UserMenu from "#/components/UserMenu";
+import WakeLockToggle from "#/components/WakeLockToggle";
 
 export default function Header() {
   return (
@@ -20,5 +20,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

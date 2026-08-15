@@ -1,23 +1,31 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { Cloud, Loader2, Plus, RefreshCw, ShoppingBasket } from "lucide-react"
-import { useEffect } from "react"
-import { Button } from "#/components/ui/button"
-import IngredientRow from "#/components/IngredientRow"
-import OrderSwitcher from "#/components/OrderSwitcher"
-import { useAuth } from "#/contexts/AuthContext"
-import { useGDriveSync } from "#/contexts/GDriveSyncContext"
-import useOrders from "#/hooks/useOrders"
-import { calculateGrandTotal } from "#/lib/calculator"
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Cloud, Loader2, Plus, RefreshCw, ShoppingBasket } from "lucide-react";
+import { useEffect } from "react";
+import { Button } from "#/components/ui/button";
+import IngredientRow from "#/components/IngredientRow";
+import OrderSwitcher from "#/components/OrderSwitcher";
+import { useAuth } from "#/contexts/AuthContext";
+import { useGDriveSync } from "#/contexts/GDriveSyncContext";
+import useOrders from "#/hooks/useOrders";
+import { calculateGrandTotal } from "#/lib/calculator";
 
 export const Route = createFileRoute("/calculators/cake-cost/$orderId")({
   component: OrderPage,
-})
+});
 
 function OrderPage() {
-  const { orderId } = Route.useParams()
-  const navigate = useNavigate()
-  const { state: authState } = useAuth()
-  const { syncStatus, error: syncError, pendingCloudData, saveAllToDrive, refetchFromDrive, acceptCloudData, dismissCloudData } = useGDriveSync()
+  const { orderId } = Route.useParams();
+  const navigate = useNavigate();
+  const { state: authState } = useAuth();
+  const {
+    syncStatus,
+    error: syncError,
+    pendingCloudData,
+    saveAllToDrive,
+    refetchFromDrive,
+    acceptCloudData,
+    dismissCloudData,
+  } = useGDriveSync();
   const {
     orders,
     setActiveOrder,
@@ -29,58 +37,58 @@ function OrderPage() {
     copyOrder,
     deleteOrder,
     replaceOrders,
-  } = useOrders()
+  } = useOrders();
 
   // URL is the source of truth for which order is displayed
-  const activeOrder = orders.find((o) => o.id === orderId) ?? orders[0]
-  const ingredients = activeOrder?.ingredients ?? []
+  const activeOrder = orders.find((o) => o.id === orderId) ?? orders[0];
+  const ingredients = activeOrder?.ingredients ?? [];
 
   // Sync hook's activeOrderId so ingredient ops target the right order
   // Also handle invalid order IDs in the URL
   useEffect(() => {
-    if (!orders.length) return
-    const exists = orders.some((o) => o.id === orderId)
+    if (!orders.length) return;
+    const exists = orders.some((o) => o.id === orderId);
     if (!exists) {
       navigate({
         to: "/calculators/cake-cost/$orderId",
         params: { orderId: orders[0].id },
         replace: true,
-      })
-      return
+      });
+      return;
     }
-    setActiveOrder(orderId)
+    setActiveOrder(orderId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderId]) // intentionally only orderId — avoids feedback loop
+  }, [orderId]); // intentionally only orderId — avoids feedback loop
 
   function handleSelectOrder(id: string) {
-    navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: id } })
+    navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: id } });
   }
 
   function handleCreateOrder() {
-    const newId = createOrder()
-    navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: newId } })
+    const newId = createOrder();
+    navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: newId } });
   }
 
   function handleCopyOrder(id: string) {
-    const newId = copyOrder(id)
+    const newId = copyOrder(id);
     if (newId) {
-      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: newId } })
+      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: newId } });
     }
   }
 
   function handleDeleteOrder(id: string) {
-    const nextId = deleteOrder(id)
+    const nextId = deleteOrder(id);
     if (nextId) {
-      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: nextId } })
+      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: nextId } });
     }
   }
 
   function handleAcceptCloud() {
-    const data = acceptCloudData()
-    const cloudOrders = data.cakeCost.orders
+    const data = acceptCloudData();
+    const cloudOrders = data.cakeCost.orders;
     if (cloudOrders.length > 0) {
-      replaceOrders(cloudOrders)
-      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: cloudOrders[0].id } })
+      replaceOrders(cloudOrders);
+      navigate({ to: "/calculators/cake-cost/$orderId", params: { orderId: cloudOrders[0].id } });
     }
   }
 
@@ -118,10 +126,7 @@ function OrderPage() {
       <div className="flex flex-col gap-3">
         {ingredients.length === 0 ? (
           <div className="bg-card border-2 border-border rounded-md p-8 shadow-[4px_4px_0px_0px_var(--border)] text-center">
-            <ShoppingBasket
-              size={32}
-              className="mx-auto mb-3 text-muted-foreground"
-            />
+            <ShoppingBasket size={32} className="mx-auto mb-3 text-muted-foreground" />
             <p className="font-bold text-foreground">No ingredients yet</p>
             <p className="text-sm text-muted-foreground mt-1">
               Add your first ingredient to get started
@@ -138,12 +143,7 @@ function OrderPage() {
           ))
         )}
 
-        <Button
-          variant="default"
-          size="sm"
-          onClick={addIngredient}
-          className="self-start"
-        >
+        <Button variant="default" size="sm" onClick={addIngredient} className="self-start">
           <Plus className="h-4 w-4 mr-1.5" />
           Add Ingredient
         </Button>
@@ -185,9 +185,7 @@ function OrderPage() {
               />
               {syncStatus === "fetching" ? "Refreshing..." : "Refetch"}
             </Button>
-            {syncStatus === "saved" && (
-              <span className="text-xs text-muted-foreground">Saved</span>
-            )}
+            {syncStatus === "saved" && <span className="text-xs text-muted-foreground">Saved</span>}
             {syncStatus === "error" && syncError && (
               <span className="text-xs text-destructive">{syncError}</span>
             )}
@@ -195,5 +193,5 @@ function OrderPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

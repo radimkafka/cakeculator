@@ -8,203 +8,202 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as RecipesIndexRouteImport } from './routes/recipes/index'
-import { Route as RecipesRecipeIdRouteImport } from './routes/recipes/$recipeId'
-import { Route as CalculatorsPanScalingRouteImport } from './routes/calculators/pan-scaling'
-import { Route as CalculatorsCakeCostRouteImport } from './routes/calculators/cake-cost'
-import { Route as CalculatorsCakeCostIndexRouteImport } from './routes/calculators/cake-cost/index'
-import { Route as CalculatorsCakeCostOrderIdRouteImport } from './routes/calculators/cake-cost/$orderId'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as AboutRouteImport } from "./routes/about";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as RecipesIndexRouteImport } from "./routes/recipes/index";
+import { Route as RecipesRecipeIdRouteImport } from "./routes/recipes/$recipeId";
+import { Route as CalculatorsPanScalingRouteImport } from "./routes/calculators/pan-scaling";
+import { Route as CalculatorsCakeCostRouteImport } from "./routes/calculators/cake-cost";
+import { Route as CalculatorsCakeCostIndexRouteImport } from "./routes/calculators/cake-cost/index";
+import { Route as CalculatorsCakeCostOrderIdRouteImport } from "./routes/calculators/cake-cost/$orderId";
 
 const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+  id: "/about",
+  path: "/about",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const RecipesIndexRoute = RecipesIndexRouteImport.update({
-  id: '/recipes/',
-  path: '/recipes/',
+  id: "/recipes/",
+  path: "/recipes/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const RecipesRecipeIdRoute = RecipesRecipeIdRouteImport.update({
-  id: '/recipes/$recipeId',
-  path: '/recipes/$recipeId',
+  id: "/recipes/$recipeId",
+  path: "/recipes/$recipeId",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CalculatorsPanScalingRoute = CalculatorsPanScalingRouteImport.update({
-  id: '/calculators/pan-scaling',
-  path: '/calculators/pan-scaling',
+  id: "/calculators/pan-scaling",
+  path: "/calculators/pan-scaling",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CalculatorsCakeCostRoute = CalculatorsCakeCostRouteImport.update({
-  id: '/calculators/cake-cost',
-  path: '/calculators/cake-cost',
+  id: "/calculators/cake-cost",
+  path: "/calculators/cake-cost",
   getParentRoute: () => rootRouteImport,
-} as any)
-const CalculatorsCakeCostIndexRoute =
-  CalculatorsCakeCostIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => CalculatorsCakeCostRoute,
-  } as any)
-const CalculatorsCakeCostOrderIdRoute =
-  CalculatorsCakeCostOrderIdRouteImport.update({
-    id: '/$orderId',
-    path: '/$orderId',
-    getParentRoute: () => CalculatorsCakeCostRoute,
-  } as any)
+} as any);
+const CalculatorsCakeCostIndexRoute = CalculatorsCakeCostIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => CalculatorsCakeCostRoute,
+} as any);
+const CalculatorsCakeCostOrderIdRoute = CalculatorsCakeCostOrderIdRouteImport.update({
+  id: "/$orderId",
+  path: "/$orderId",
+  getParentRoute: () => CalculatorsCakeCostRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/calculators/cake-cost': typeof CalculatorsCakeCostRouteWithChildren
-  '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
-  '/recipes/$recipeId': typeof RecipesRecipeIdRoute
-  '/recipes/': typeof RecipesIndexRoute
-  '/calculators/cake-cost/$orderId': typeof CalculatorsCakeCostOrderIdRoute
-  '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
+  "/": typeof IndexRoute;
+  "/about": typeof AboutRoute;
+  "/calculators/cake-cost": typeof CalculatorsCakeCostRouteWithChildren;
+  "/calculators/pan-scaling": typeof CalculatorsPanScalingRoute;
+  "/recipes/$recipeId": typeof RecipesRecipeIdRoute;
+  "/recipes/": typeof RecipesIndexRoute;
+  "/calculators/cake-cost/$orderId": typeof CalculatorsCakeCostOrderIdRoute;
+  "/calculators/cake-cost/": typeof CalculatorsCakeCostIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
-  '/recipes/$recipeId': typeof RecipesRecipeIdRoute
-  '/recipes': typeof RecipesIndexRoute
-  '/calculators/cake-cost/$orderId': typeof CalculatorsCakeCostOrderIdRoute
-  '/calculators/cake-cost': typeof CalculatorsCakeCostIndexRoute
+  "/": typeof IndexRoute;
+  "/about": typeof AboutRoute;
+  "/calculators/pan-scaling": typeof CalculatorsPanScalingRoute;
+  "/recipes/$recipeId": typeof RecipesRecipeIdRoute;
+  "/recipes": typeof RecipesIndexRoute;
+  "/calculators/cake-cost/$orderId": typeof CalculatorsCakeCostOrderIdRoute;
+  "/calculators/cake-cost": typeof CalculatorsCakeCostIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/calculators/cake-cost': typeof CalculatorsCakeCostRouteWithChildren
-  '/calculators/pan-scaling': typeof CalculatorsPanScalingRoute
-  '/recipes/$recipeId': typeof RecipesRecipeIdRoute
-  '/recipes/': typeof RecipesIndexRoute
-  '/calculators/cake-cost/$orderId': typeof CalculatorsCakeCostOrderIdRoute
-  '/calculators/cake-cost/': typeof CalculatorsCakeCostIndexRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/about": typeof AboutRoute;
+  "/calculators/cake-cost": typeof CalculatorsCakeCostRouteWithChildren;
+  "/calculators/pan-scaling": typeof CalculatorsPanScalingRoute;
+  "/recipes/$recipeId": typeof RecipesRecipeIdRoute;
+  "/recipes/": typeof RecipesIndexRoute;
+  "/calculators/cake-cost/$orderId": typeof CalculatorsCakeCostOrderIdRoute;
+  "/calculators/cake-cost/": typeof CalculatorsCakeCostIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/about'
-    | '/calculators/cake-cost'
-    | '/calculators/pan-scaling'
-    | '/recipes/$recipeId'
-    | '/recipes/'
-    | '/calculators/cake-cost/$orderId'
-    | '/calculators/cake-cost/'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/about"
+    | "/calculators/cake-cost"
+    | "/calculators/pan-scaling"
+    | "/recipes/$recipeId"
+    | "/recipes/"
+    | "/calculators/cake-cost/$orderId"
+    | "/calculators/cake-cost/";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/about'
-    | '/calculators/pan-scaling'
-    | '/recipes/$recipeId'
-    | '/recipes'
-    | '/calculators/cake-cost/$orderId'
-    | '/calculators/cake-cost'
+    | "/"
+    | "/about"
+    | "/calculators/pan-scaling"
+    | "/recipes/$recipeId"
+    | "/recipes"
+    | "/calculators/cake-cost/$orderId"
+    | "/calculators/cake-cost";
   id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/calculators/cake-cost'
-    | '/calculators/pan-scaling'
-    | '/recipes/$recipeId'
-    | '/recipes/'
-    | '/calculators/cake-cost/$orderId'
-    | '/calculators/cake-cost/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/about"
+    | "/calculators/cake-cost"
+    | "/calculators/pan-scaling"
+    | "/recipes/$recipeId"
+    | "/recipes/"
+    | "/calculators/cake-cost/$orderId"
+    | "/calculators/cake-cost/";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  CalculatorsCakeCostRoute: typeof CalculatorsCakeCostRouteWithChildren
-  CalculatorsPanScalingRoute: typeof CalculatorsPanScalingRoute
-  RecipesRecipeIdRoute: typeof RecipesRecipeIdRoute
-  RecipesIndexRoute: typeof RecipesIndexRoute
+  IndexRoute: typeof IndexRoute;
+  AboutRoute: typeof AboutRoute;
+  CalculatorsCakeCostRoute: typeof CalculatorsCakeCostRouteWithChildren;
+  CalculatorsPanScalingRoute: typeof CalculatorsPanScalingRoute;
+  RecipesRecipeIdRoute: typeof RecipesRecipeIdRoute;
+  RecipesIndexRoute: typeof RecipesIndexRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recipes/': {
-      id: '/recipes/'
-      path: '/recipes'
-      fullPath: '/recipes/'
-      preLoaderRoute: typeof RecipesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recipes/$recipeId': {
-      id: '/recipes/$recipeId'
-      path: '/recipes/$recipeId'
-      fullPath: '/recipes/$recipeId'
-      preLoaderRoute: typeof RecipesRecipeIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calculators/pan-scaling': {
-      id: '/calculators/pan-scaling'
-      path: '/calculators/pan-scaling'
-      fullPath: '/calculators/pan-scaling'
-      preLoaderRoute: typeof CalculatorsPanScalingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calculators/cake-cost': {
-      id: '/calculators/cake-cost'
-      path: '/calculators/cake-cost'
-      fullPath: '/calculators/cake-cost'
-      preLoaderRoute: typeof CalculatorsCakeCostRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calculators/cake-cost/': {
-      id: '/calculators/cake-cost/'
-      path: '/'
-      fullPath: '/calculators/cake-cost/'
-      preLoaderRoute: typeof CalculatorsCakeCostIndexRouteImport
-      parentRoute: typeof CalculatorsCakeCostRoute
-    }
-    '/calculators/cake-cost/$orderId': {
-      id: '/calculators/cake-cost/$orderId'
-      path: '/$orderId'
-      fullPath: '/calculators/cake-cost/$orderId'
-      preLoaderRoute: typeof CalculatorsCakeCostOrderIdRouteImport
-      parentRoute: typeof CalculatorsCakeCostRoute
-    }
+    "/about": {
+      id: "/about";
+      path: "/about";
+      fullPath: "/about";
+      preLoaderRoute: typeof AboutRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/recipes/": {
+      id: "/recipes/";
+      path: "/recipes";
+      fullPath: "/recipes/";
+      preLoaderRoute: typeof RecipesIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/recipes/$recipeId": {
+      id: "/recipes/$recipeId";
+      path: "/recipes/$recipeId";
+      fullPath: "/recipes/$recipeId";
+      preLoaderRoute: typeof RecipesRecipeIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/calculators/pan-scaling": {
+      id: "/calculators/pan-scaling";
+      path: "/calculators/pan-scaling";
+      fullPath: "/calculators/pan-scaling";
+      preLoaderRoute: typeof CalculatorsPanScalingRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/calculators/cake-cost": {
+      id: "/calculators/cake-cost";
+      path: "/calculators/cake-cost";
+      fullPath: "/calculators/cake-cost";
+      preLoaderRoute: typeof CalculatorsCakeCostRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/calculators/cake-cost/": {
+      id: "/calculators/cake-cost/";
+      path: "/";
+      fullPath: "/calculators/cake-cost/";
+      preLoaderRoute: typeof CalculatorsCakeCostIndexRouteImport;
+      parentRoute: typeof CalculatorsCakeCostRoute;
+    };
+    "/calculators/cake-cost/$orderId": {
+      id: "/calculators/cake-cost/$orderId";
+      path: "/$orderId";
+      fullPath: "/calculators/cake-cost/$orderId";
+      preLoaderRoute: typeof CalculatorsCakeCostOrderIdRouteImport;
+      parentRoute: typeof CalculatorsCakeCostRoute;
+    };
   }
 }
 
 interface CalculatorsCakeCostRouteChildren {
-  CalculatorsCakeCostOrderIdRoute: typeof CalculatorsCakeCostOrderIdRoute
-  CalculatorsCakeCostIndexRoute: typeof CalculatorsCakeCostIndexRoute
+  CalculatorsCakeCostOrderIdRoute: typeof CalculatorsCakeCostOrderIdRoute;
+  CalculatorsCakeCostIndexRoute: typeof CalculatorsCakeCostIndexRoute;
 }
 
 const CalculatorsCakeCostRouteChildren: CalculatorsCakeCostRouteChildren = {
   CalculatorsCakeCostOrderIdRoute: CalculatorsCakeCostOrderIdRoute,
   CalculatorsCakeCostIndexRoute: CalculatorsCakeCostIndexRoute,
-}
+};
 
-const CalculatorsCakeCostRouteWithChildren =
-  CalculatorsCakeCostRoute._addFileChildren(CalculatorsCakeCostRouteChildren)
+const CalculatorsCakeCostRouteWithChildren = CalculatorsCakeCostRoute._addFileChildren(
+  CalculatorsCakeCostRouteChildren,
+);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -213,7 +212,7 @@ const rootRouteChildren: RootRouteChildren = {
   CalculatorsPanScalingRoute: CalculatorsPanScalingRoute,
   RecipesRecipeIdRoute: RecipesRecipeIdRoute,
   RecipesIndexRoute: RecipesIndexRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

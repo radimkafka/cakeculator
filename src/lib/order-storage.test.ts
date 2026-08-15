@@ -1,16 +1,16 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { loadOrders, saveOrders } from "./order-storage"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { loadOrders, saveOrders } from "./order-storage";
 
 describe("loadOrders", () => {
-  let warn: ReturnType<typeof vi.spyOn>
+  let warn: ReturnType<typeof vi.spyOn>;
   beforeEach(() => {
-    window.localStorage.clear()
-    warn = vi.spyOn(console, "warn").mockImplementation(() => {})
-  })
+    window.localStorage.clear();
+    warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
   afterEach(() => {
-    warn.mockRestore()
-  })
+    warn.mockRestore();
+  });
 
   it("round-trips a valid array", () => {
     const order = {
@@ -18,11 +18,11 @@ describe("loadOrders", () => {
       name: "Birthday cake",
       createdAt: 456,
       ingredients: [{ id: "i1", name: "Sugar", unitPrice: 0.5, amount: 200, unit: "g" as const }],
-    }
-    saveOrders([order])
-    expect(loadOrders()).toEqual([order])
-    expect(warn).not.toHaveBeenCalled()
-  })
+    };
+    saveOrders([order]);
+    expect(loadOrders()).toEqual([order]);
+    expect(warn).not.toHaveBeenCalled();
+  });
 
   it("defaults legacy ingredients without a unit to grams", () => {
     window.localStorage.setItem(
@@ -35,38 +35,38 @@ describe("loadOrders", () => {
           ingredients: [{ id: "i1", name: "Flour", unitPrice: 20, amount: 100 }],
         },
       ]),
-    )
-    const result = loadOrders()
-    expect(result[0]?.ingredients[0]?.unit).toBe("g")
-    expect(warn).not.toHaveBeenCalled()
-  })
+    );
+    const result = loadOrders();
+    expect(result[0]?.ingredients[0]?.unit).toBe("g");
+    expect(warn).not.toHaveBeenCalled();
+  });
 
   it("returns a default order when storage is empty", () => {
-    const result = loadOrders()
-    expect(result).toHaveLength(1)
-    expect(result[0]?.ingredients).toEqual([])
-  })
+    const result = loadOrders();
+    expect(result).toHaveLength(1);
+    expect(result[0]?.ingredients).toEqual([]);
+  });
 
   it("returns a default order when an empty array is stored", () => {
-    window.localStorage.setItem("cakeculator-orders", "[]")
-    const result = loadOrders()
-    expect(result).toHaveLength(1)
-  })
+    window.localStorage.setItem("cakeculator-orders", "[]");
+    const result = loadOrders();
+    expect(result).toHaveLength(1);
+  });
 
   it("falls back to default on malformed JSON", () => {
-    window.localStorage.setItem("cakeculator-orders", "{not json")
-    const result = loadOrders()
-    expect(result).toHaveLength(1)
-  })
+    window.localStorage.setItem("cakeculator-orders", "{not json");
+    const result = loadOrders();
+    expect(result).toHaveLength(1);
+  });
 
   it("falls back to default and warns on shape mismatch", () => {
     window.localStorage.setItem(
       "cakeculator-orders",
       JSON.stringify([{ id: "x", ingredients: [{ id: "i", name: "n", amount: 1 }] }]),
-    )
-    const result = loadOrders()
-    expect(result).toHaveLength(1)
-    expect(result[0]?.id).not.toBe("x")
-    expect(warn).toHaveBeenCalledOnce()
-  })
-})
+    );
+    const result = loadOrders();
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).not.toBe("x");
+    expect(warn).toHaveBeenCalledOnce();
+  });
+});

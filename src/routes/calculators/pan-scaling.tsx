@@ -1,27 +1,26 @@
-import { useState } from "react"
-import { createFileRoute } from "@tanstack/react-router"
-import { Scaling } from "lucide-react"
-import { panScalingCoefficient } from "#/lib/pan-scaling"
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Scaling } from "lucide-react";
+import { panScalingCoefficient } from "#/lib/pan-scaling";
 
 export const Route = createFileRoute("/calculators/pan-scaling")({
   component: PanScalingPage,
-})
+});
 
 const inputClasses =
-  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow w-28"
+  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow w-28";
 
 const badgeClasses =
-  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0"
+  "text-xs font-bold uppercase bg-secondary text-secondary-foreground border-2 border-border rounded px-2 py-1 shadow-[2px_2px_0px_0px_var(--border)] select-none shrink-0";
 
 function PanScalingPage() {
-  const [original, setOriginal] = useState("15")
-  const [target, setTarget] = useState("")
+  const [original, setOriginal] = useState("15");
+  const [target, setTarget] = useState("");
 
-  const origNum = parseFloat(original)
-  const targNum = parseFloat(target)
-  const valid =
-    !isNaN(origNum) && !isNaN(targNum) && origNum > 0 && targNum > 0
-  const coefficient = valid ? panScalingCoefficient(targNum, origNum) : null
+  const origNum = parseFloat(original);
+  const targNum = parseFloat(target);
+  const valid = !isNaN(origNum) && !isNaN(targNum) && origNum > 0 && targNum > 0;
+  const coefficient = valid ? panScalingCoefficient(targNum, origNum) : null;
 
   return (
     <div className="max-w-5xl mx-auto w-full px-4 py-8">
@@ -86,14 +85,12 @@ function PanScalingPage() {
                 {coefficient}&times;
               </span>
               {coefficient === 1 && (
-                <p className="text-xs text-secondary-foreground/70 mt-0.5">
-                  No scaling needed
-                </p>
+                <p className="text-xs text-secondary-foreground/70 mt-0.5">No scaling needed</p>
               )}
             </div>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,15 +1,15 @@
-import { X } from "lucide-react"
-import type { Ingredient } from "#/types/recipe-book"
-import UnitSelector from "#/components/UnitSelector"
+import { X } from "lucide-react";
+import type { Ingredient } from "#/types/recipe-book";
+import UnitSelector from "#/components/UnitSelector";
 
 type RecipeBookIngredientRowProps = {
-  ingredient: Ingredient
-  onChange: (id: string, patch: Partial<Omit<Ingredient, "id">>) => void
-  onRemove: (id: string) => void
-}
+  ingredient: Ingredient;
+  onChange: (id: string, patch: Partial<Omit<Ingredient, "id">>) => void;
+  onRemove: (id: string) => void;
+};
 
 const inputClasses =
-  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow"
+  "bg-background border-2 border-border rounded-md px-3 py-2 text-sm font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--border)] transition-shadow";
 
 export default function RecipeBookIngredientRow({
   ingredient,
@@ -27,9 +27,7 @@ export default function RecipeBookIngredientRow({
           <input
             type="text"
             value={ingredient.name}
-            onChange={(e) =>
-              onChange(ingredient.id, { name: e.target.value })
-            }
+            onChange={(e) => onChange(ingredient.id, { name: e.target.value })}
             placeholder="Ingredient name"
             maxLength={60}
             className={`${inputClasses} w-full`}
@@ -72,5 +70,5 @@ export default function RecipeBookIngredientRow({
         </div>
       </div>
     </div>
-  )
+  );
 }
